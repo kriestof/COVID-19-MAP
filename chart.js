@@ -104,6 +104,15 @@ function Chart(confirmedData, svg) {
       .attr("cx", (d) => x(d.time)+MARGIN.x)
       .attr("cy", (d) => y(d.value)+MARGIN.y)
       .attr("r", 5)
+      .attr("stroke-width", "2px")
+      .on("mouseover", function() {
+        d3.select(this).attr("stroke", d3.select(this).attr("fill"))
+        d3.select(this).attr("fill", "white")
+      })
+      .on("mouseout", function() {
+        d3.select(this).attr("fill", d3.select(this).attr("stroke"))
+        d3.select(this).attr("stroke", null)
+      })
       .append("title").text(function (d) {
         let countryName = d3.select(this.parentNode.parentNode).datum().name
         return `country: ${countryName}\n value: ${d.value} \n date: ${d3.timeFormat("%Y-%m-%d")(d.time)}`
