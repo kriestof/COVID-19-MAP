@@ -19,6 +19,9 @@ function worldMap(confirmedData, svg) {
   let projection = d3.geoRobinson()
   const PROJECTION_SCALE_WORLD = projection.scale()
   const PROJECTION_TRANSLATE_WORLD = projection.translate()
+  if (region == "europe")
+    projection = projection.scale(700).translate([300, 930])
+
   let path = d3.geoPath().projection(projection)
   let scale = d3.scaleLog().domain([1,100000]).base(4)
   world = undefined
@@ -85,6 +88,9 @@ function worldMap(confirmedData, svg) {
     .on("mouseout", function() {
       d3.select(this).attr("stroke", "")
       tooltip.style("opacity", 0)
+    })
+    .on("click", function(d) {
+        chart.drawChart(d.properties.name)
     })
   }
 

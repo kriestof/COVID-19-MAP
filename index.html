@@ -81,6 +81,8 @@ let confirmedData = undefined
 let chart = undefined
 let map = undefined
 let mode = d3.select("#mode").node().value
+let region = d3.select("#region").node().value
+
 d3.select("#mode").on("change", function() {
   mode = this.value
   map.displayMapForDate()
@@ -112,17 +114,11 @@ d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_co
  return data
 }).then(function(confirmedData) {
   map = worldMap(confirmedData, mapSvg)
+  chart = new Chart(confirmedData, chartSvg)
   return map.initMap()
 })
 .then(function(confirmedData) {
   map.displayMapForDate("3/14/20")
 
-  mapSvg.selectAll("path")
-  .on("click", function(d) {
-    chart.drawChart(d.properties.name)
-  })
-}).then(function() {
-  chart = new Chart(confirmedData, chartSvg)
 })
-
 </script>
