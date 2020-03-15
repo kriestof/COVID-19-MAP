@@ -26,7 +26,13 @@ function Chart(confirmedData, svg) {
   this.countryColors = new Set()
 
   y = d3.scaleLog().domain([1,100000]).range([HEIGHT, 0])
-  svg.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(10)).attr("transform", `translate(${MARGIN.x}, ${MARGIN.y})`)
+  svg.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(10).tickFormat(
+    function (d) {
+      return (Math.round(Math.log10(d)) - Math.log10(d)) &&
+        (Math.round(Math.log10(d/2)) - Math.log10(d/2))  ? '':d3.format(",.0f")(d) ;
+    }
+
+  )).attr("transform", `translate(${MARGIN.x}, ${MARGIN.y})`)
 
   dataCols = confirmedData.columns.slice(4, confirmedData.columns.length)
   x = d3.scaleTime().domain([new Date(dataCols[0]), new Date(dataCols[dataCols.length-1])]).range([ 0, WIDTH])
