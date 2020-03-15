@@ -1,0 +1,94 @@
+<!-- Copyright 2020 Krzysztof Piwoński <piwonski.kris@gmail.com> -->
+<!--
+    This file is a part of COVID-19 chart.
+
+    COVID-19 chart is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    COVID-19 chart is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ -->
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+  <title>COVID-19 chart and map</title>
+  <meta name="description" content="Check how COVID-19 disease develops worldwide.">
+  <meta name="keywords" content="COVID-19,chart,map">
+  <meta name="author" content="Krzysztof Piwoński">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+<div id="map">
+  <div id="map-menu">
+    <span><strong>Choose date:</strong></span>
+    <input type="range" min="0" max="22" id="date">
+    <strong>Date:</strong> <span id="selected-date"></span>
+  </div>
+</div>
+<div id="chart">
+  <input type="text" id="search-country" placeholder="Type country name">
+  <div id="result"><ul></ul></div>
+</div>
+
+<div id="footer">
+<span class="left">Copyright 2020 Krzysztof Piwoński.</span> <a href="" class="center">source code</a>
+<span class="right">Based on <a href="https://github.com/CSSEGISandData/COVID-19">data</a> collected by Johns Hopkins CSSE.</span>
+<div style="clear:both;"></div>
+</div>
+
+<script src="https://unpkg.com/d3@5"></script>
+<script src="https://unpkg.com/d3-geo-projection@2.8"></script>
+<script src="https://unpkg.com/topojson-client@3"></script>
+<script src="chart.js"></script>
+<script src="map.js"></script>
+<script>
+let mapSvg = d3.select("#map").append("svg");
+let chartSvg = d3.select("#chart").append("svg")
+let confirmedData = undefined
+
+let chart = undefined
+let map = undefined
+
+d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv").then(function(data) {
+ confirmedData = data
+ const namesMap = {
+   "US": "United States of America",
+   "Korea, South": "South Korea",
+   "Korea, North": "North Korea",
+   "Bosnia and Herzegovina": "Bosnia and Herz.",
+   "North Macedonia": "Macedonia",
+   "Dominican Republic": "Dominican Rep.",
+   "Congo (Kinshasa)": "Dem. Rep. Congo",
+   "Taiwan*": "Taiwan"
+ }
+
+ data.map(function(d) {
+   if (d["Country/Region"] in namesMap)
+     d["Country/Region"] = namesMap[d["Country/Region"]]
+ })
+ return data
+}).then(function(confirmedData) {
+  map = worldMap(confirmedData, mapSvg)
+  return map.initMap()
+})
+.then(function(confirmedData) {
+  map.displayMapForDate("3/13/20")
+
+  mapSvg.selectAll("path")
+  .on("click", function(d) {
+    chart.drawChart(d.properties.name)
+  })
+}).then(function() {
+  chart = new Chart(confirmedData, chartSvg)
+})
+
+</script>
