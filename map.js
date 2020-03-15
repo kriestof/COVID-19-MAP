@@ -61,7 +61,8 @@ function worldMap(confirmedData, svg) {
          .data(topojson.feature(world,world.objects.countries).features)
          .enter().append("path")
          .attr("d", path)
-         .attr("fill", "green");
+         .attr("fill", "green")
+         .style("cursor", "pointer");
     }).then(function() {
       svg.selectAll("path")
       .on("mouseover", function(d) {
@@ -80,11 +81,17 @@ function worldMap(confirmedData, svg) {
   }
 
   function displayMapForDate(date) {
+    if (!date)
+      date = d3.select("#selected-date").text()
     d3.select("#selected-date").text(date)
+
+    let prevDay = new Date(date)
+    prevDay.setDate(prevDay.getDate()-1)
+    prevDay = d3.timeFormat("%-m/%-d/%y")(prevDay)
 
     countriesData =  d3.nest()
       .key((d) => d["Country/Region"])
-      .rollup((v) => d3.sum(v, (d) => parseFloat(d[date])))
+      .rollup((v) => d3.sum(v, (d) => mode == "all"? parseFloat(d[date]):parseFloat(d[date]) - parseFloat(d[prevDay])))
       .object(confirmedData)
 
     svg.selectAll("path").

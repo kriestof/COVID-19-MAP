@@ -26,10 +26,11 @@ div.tooltip {
     border-radius: 8px;
     pointer-events: none;
 }
-#map {width: 900px}
+#mode {float:right}
+#map {width: 900px;}
 #map #date {vertical-align: middle;}
 #map svg{width: 100%; height:500px; margin:0px auto; background: black;}
-#map #map-menu {height: 34px; padding: 8px; box-sizing: border-box;}
+#map #map-menu {height: 34px; padding: 8px; box-sizing: border-box; display: inline-block;}
 #chart {margin-left: 10px; width: 890px;}
 #chart svg{width: 100%; height:800px; margin:0px auto;}
 #chart #search-country {width: 300px; box-sizing: border-box;}

@@ -43,6 +43,13 @@
     <input type="range" min="0" max="22" id="date">
     <strong>Date:</strong> <span id="selected-date"></span>
   </div>
+  <div id="mode">
+    <strong>Mode:</strong>
+    <select>
+      <option default value="all">All cases</option>
+      <option value="new">Daily new cases</option>
+    </select>
+  </div>
 </div>
 <div id="chart">
   <input type="text" id="search-country" placeholder="Type country name">
@@ -67,6 +74,12 @@ let confirmedData = undefined
 
 let chart = undefined
 let map = undefined
+let mode = d3.select("#mode select").node().value
+d3.select("#mode select").on("change", function() {
+  mode = this.value
+  map.displayMapForDate()
+  chart.drawLinesChart()
+})
 
 d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv").then(function(data) {
  confirmedData = data

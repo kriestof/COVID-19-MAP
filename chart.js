@@ -66,24 +66,33 @@ function Chart(confirmedData, svg) {
     dates = confirmedData.columns.slice(4, confirmedData.columns.length)
     tsData = confirmedData.filter((d) => d["Country/Region"] == countryName)
     groupedTsData = dataCols.map(function(date) {
-      return d3.nest()
-        .key((d) => d["Country/Region"])
-        .rollup((v) => d3.sum(v, (d) => parseFloat(d[date])))
-        .object(tsData)[countryName]
-    })
+   return d3.nest()
+     .key((d) => d["Country/Region"])
+     .rollup((v) => d3.sum(v, (d) => parseFloat(d[date])))
+     .object(tsData)[countryName]
+ })
+
+    diffGroupedTsData = [0]
+    for (let i = 0; i < groupedTsData.length-1; i+=1) {
+      let dif = groupedTsData[i+1] - groupedTsData[i]
+      diffGroupedTsData.push(dif > 0 ? dif:0)
+    }
 
     chartArray = []
+
     for (i = 0; i < groupedTsData.length; i+=1) if (groupedTsData[i])
-      chartArray.push({time: new Date(dates[i]), value: groupedTsData[i]})
+      chartArray.push({time: new Date(dates[i]), valueAll: groupedTsData[i], valueNew: diffGroupedTsData[i]})
 
     this.countries.push({name: countryName, data: chartArray, color: this._getColor()})
 
-    this._drawLinesChart()
+    this.drawLinesChart()
     this._drawLegendChart()
     if (this.countries.length == 10) d3.select("#chart #search-country").attr("disabled", true)
   }
 
-  this._drawLinesChart = function() {
+  this.drawLinesChart = function() {
+    chartSvg.selectAll('g.country').remove()
+
     let country = chartSvg.selectAll("g.country")
         .data(this.countries).enter().append("g").attr("class", "country")
 
@@ -93,16 +102,16 @@ function Chart(confirmedData, svg) {
        .attr("stroke-width", 1.5)
        .attr("d", (d) => d3.line()
          .x((d) => x(d.time)+MARGIN.x)
-         .y((d) => y(d.value)+MARGIN.y)(d.data)
+         .y((d) => y(this._getChartValue(d))+MARGIN.y)(d.data.filter(x => this._getChartValue(x)))
        )
 
     country
       .selectAll("circle")
-      .data((d) => d.data)
+      .data((d) => d.data.filter((x) => this._getChartValue(x)))
       .enter().append("circle")
       .attr("fill", function(d) { return d3.select(this.parentNode).datum().color})
       .attr("cx", (d) => x(d.time)+MARGIN.x)
-      .attr("cy", (d) => y(d.value)+MARGIN.y)
+      .attr("cy", (d) => y(this._getChartValue(d))+MARGIN.y)
       .attr("r", 5)
       .attr("stroke-width", "2px")
       .on("mouseover", function() {
@@ -115,8 +124,12 @@ function Chart(confirmedData, svg) {
       })
       .append("title").text(function (d) {
         let countryName = d3.select(this.parentNode.parentNode).datum().name
-        return `country: ${countryName}\n value: ${d.value} \n date: ${d3.timeFormat("%Y-%m-%d")(d.time)}`
+        return `country: ${countryName}\n value: ${parent._getChartValue(d)} \n date: ${d3.timeFormat("%Y-%m-%d")(d.time)}`
       })
+  }
+
+  this._getChartValue = function(d) {
+    return mode == "all" ? d.valueAll:d.valueNew
   }
 
   this._drawLegendChart = function() {
@@ -160,8 +173,7 @@ function Chart(confirmedData, svg) {
     chartSvg.selectAll('g.legendEntry').remove()
     this._drawLegendChart()
 
-    chartSvg.selectAll('g.country').remove()
-    this._drawLinesChart()
+    this.drawLinesChart()
 
     if (this.countries.length < 10) d3.select("#chart #search-country").attr("disabled", null)
     this.countryColors.delete(removedCountry.color)
