@@ -60,6 +60,7 @@ function Chart(confirmedData, svg) {
   })
 
   this.drawChart = function(countryName) {
+    if (this.countries.length >= 10) return undefined
     if (this.countries.filter((x) => x.name == countryName).length) return undefined
 
     dates = confirmedData.columns.slice(4, confirmedData.columns.length)
