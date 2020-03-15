@@ -17,14 +17,16 @@
 
 function worldMap(confirmedData, svg) {
   let projection = d3.geoRobinson()
-  let path = d3.geoPath().projection(projection);
+  const PROJECTION_SCALE_WORLD = projection.scale()
+  const PROJECTION_TRANSLATE_WORLD = projection.translate()
+  let path = d3.geoPath().projection(projection)
   let scale = d3.scaleLog().domain([1,100000]).base(4)
+  world = undefined
+
+  let tooltip = undefined
+
 
   function initMap() {
-    let div = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
-
     let legend = svg.selectAll('g.legendEntry')
         .data([0].concat([1, 5, 20, 80, 250, 1000, 4000, 16000, 60000]))
         .enter()
@@ -48,6 +50,10 @@ function worldMap(confirmedData, svg) {
          .style("font-size", "12px")
          .style("fill", "white");
 
+    tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
     let dates = confirmedData.columns.slice(4, confirmedData.columns.length)
     let dateEl = d3.select("#date")
       .attr("max", dates.length-1)
@@ -56,28 +62,46 @@ function worldMap(confirmedData, svg) {
     })
     dateEl.node().value = dates.length-1
 
-    return d3.json("https://unpkg.com/world-atlas@2.0.2/countries-110m.json").then(function(world) {
-      return svg.selectAll("path")
-         .data(topojson.feature(world,world.objects.countries).features)
-         .enter().append("path")
-         .attr("d", path)
-         .attr("fill", "green")
-         .style("cursor", "pointer");
-    }).then(function() {
-      svg.selectAll("path")
-      .on("mouseover", function(d) {
-        d3.select(this).attr("stroke", "#004d76").attr("stroke-width", "3")
-        div
-          .html(`country: ${d.properties.name} </br> value: ${d.properties.value ? d.properties.value:0}`)
-          .style("top", d3.mouse(this)[1] + "px")
-          .style("left", d3.mouse(this)[0] + "px")
-          .style("opacity", 0.9)
-      })
-      .on("mouseout", function() {
-        d3.select(this).attr("stroke", "")
-        div.style("opacity", 0)
-      })
+    return d3.json("https://unpkg.com/world-atlas@2.0.2/countries-110m.json").then((data) => world = data)
+    .then(drawWorld)
+  }
+
+  function drawWorld() {
+    svg.selectAll("path")
+       .data(topojson.feature(world,world.objects.countries).features)
+       .enter().append("path")
+       .attr("d", path)
+       .attr("fill", "green")
+       .style("cursor", "pointer");
+    svg.selectAll("path")
+    .on("mouseover", function(d) {
+      d3.select(this).attr("stroke", "#004d76").attr("stroke-width", "3")
+      tooltip
+        .html(`country: ${d.properties.name} </br> value: ${d.properties.value ? d.properties.value:0}`)
+        .style("top", d3.mouse(this)[1] + "px")
+        .style("left", d3.mouse(this)[0] + "px")
+        .style("opacity", 0.9)
     })
+    .on("mouseout", function() {
+      d3.select(this).attr("stroke", "")
+      tooltip.style("opacity", 0)
+    })
+  }
+
+  function displayRegion(region) {
+    if (region == "world") {
+      projection = projection.scale(PROJECTION_SCALE_WORLD).translate(PROJECTION_TRANSLATE_WORLD)
+      svg.selectAll("path").remove()
+      drawWorld()
+      displayMapForDate()
+    }
+
+    if (region == "europe") {
+      projection = projection.scale(700).translate([300, 930])
+      svg.selectAll("path").remove()
+      drawWorld()
+      displayMapForDate()
+    }
   }
 
   function displayMapForDate(date) {
@@ -102,6 +126,7 @@ function worldMap(confirmedData, svg) {
 
   return {
     displayMapForDate: displayMapForDate,
+    displayRegion: displayRegion,
     initMap: initMap
   }
 }
