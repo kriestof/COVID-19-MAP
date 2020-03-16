@@ -25,7 +25,7 @@ function Chart(confirmedData, svg) {
   this.countries = []
   this.countryColors = new Set()
 
-  y = d3.scaleLog().domain([1,100000]).range([HEIGHT, 0])
+  y = d3.scaleLog().domain([0.9,100000]).clamp(true).range([HEIGHT, 0])
   svg.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(10).tickFormat(
     function (d) {
       return (Math.round(Math.log10(d)) - Math.log10(d)) &&
@@ -72,7 +72,7 @@ function Chart(confirmedData, svg) {
      .object(tsData)[countryName]
  })
 
-    diffGroupedTsData = [0]
+    diffGroupedTsData = [undefined]
     for (let i = 0; i < groupedTsData.length-1; i+=1) {
       let dif = groupedTsData[i+1] - groupedTsData[i]
       diffGroupedTsData.push(dif > 0 ? dif:0)
@@ -80,7 +80,7 @@ function Chart(confirmedData, svg) {
 
     chartArray = []
 
-    for (i = 0; i < groupedTsData.length; i+=1) if (groupedTsData[i])
+    for (i = 0; i < groupedTsData.length; i+=1)
       chartArray.push({time: new Date(dates[i]), valueAll: groupedTsData[i], valueNew: diffGroupedTsData[i]})
 
     this.countries.push({name: countryName, data: chartArray, color: this._getColor()})
@@ -102,12 +102,12 @@ function Chart(confirmedData, svg) {
        .attr("stroke-width", 1.5)
        .attr("d", (d) => d3.line()
          .x((d) => x(d.time)+MARGIN.x)
-         .y((d) => y(this._getChartValue(d))+MARGIN.y)(d.data.filter(x => this._getChartValue(x)))
+         .y((d) => y(this._getChartValue(d))+MARGIN.y)(d.data.filter((x) => this._getChartValue(x) !== undefined))
        )
 
     country
       .selectAll("circle")
-      .data((d) => d.data.filter((x) => this._getChartValue(x)))
+      .data((d) => d.data.filter((x) => this._getChartValue(x) !== undefined))
       .enter().append("circle")
       .attr("fill", function(d) { return d3.select(this.parentNode).datum().color})
       .attr("cx", (d) => x(d.time)+MARGIN.x)
