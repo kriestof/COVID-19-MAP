@@ -25,6 +25,7 @@ function Chart(confirmedData, svg) {
   this.countries = []
   this.countryColors = new Set()
 
+  svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "white")
   y = d3.scaleLog().domain([0.9,100000]).clamp(true).range([HEIGHT, 0])
   svg.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(10).tickFormat(
     function (d) {
@@ -40,6 +41,7 @@ function Chart(confirmedData, svg) {
     .selectAll("text").attr("transform", "rotate(-65)").attr("dx", "-.8em").attr("dy", ".15em").style("text-anchor", "end")
 
   svg.append("g").attr("class", "grid")
+  d3.select("#download-chart").on("click", () => this.downloadChart())
 
   d3.select("#chart #search-country").on("keyup", function() {
     if(this.value.length > 2) {
@@ -156,6 +158,7 @@ function Chart(confirmedData, svg) {
          .style("font-size", "12px")
          .style("fill", "red")
          .style("cursor", "pointer")
+         .attr("class", "remove-label")
          .on("click", (d) => this.removeFromChart(d))
 
      legend
@@ -166,6 +169,7 @@ function Chart(confirmedData, svg) {
          .text((d) => d.name)
          .style("font-family", "sans-serif")
          .style("font-size", "12px")
+         .attr("class", "text-label")
   }
 
   this.removeFromChart = function(removedCountry) {
@@ -196,4 +200,50 @@ function Chart(confirmedData, svg) {
       }
     }).sort()
   }
+
+  this.downloadChart = function(e) {
+    console.log("Aaa")
+    console.log(this)
+    d3.event.preventDefault()
+    const MARGIN = {x: 60, y: 10}
+    const WIDTH = 800
+    const HEIGHT = 600
+
+    downloadSvg = d3.select(chartSvg.node().cloneNode(true))
+    downloadSvg.attr("width", chartSvg.node().width.baseVal.value)
+    downloadSvg.attr("height",chartSvg.node().height.baseVal.value)
+
+    downloadSvg.selectAll(".remove-label").remove()
+    downloadSvg.selectAll(".text-label").attr("x", 40)
+
+    downloadSvg
+      .append("text")
+      .text("source: covid19chart.info")
+      .attr("y", downloadSvg.attr("height")-5).attr("x", MARGIN.x)
+      .attr("fill", "#595959")
+      .style("font-family", "sans-serif")
+      .style("font-size", "12px")
+
+    let svgString = new XMLSerializer().serializeToString(downloadSvg.node())
+
+    let canvas = document.createElement("canvas");
+    canvas.width=downloadSvg.attr("width"); canvas.height=downloadSvg.attr("height")
+
+    let ctx = canvas.getContext("2d");
+    let img = new Image();
+    let svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
+    let url = URL.createObjectURL(svg);
+
+    img.onload = function() {
+      ctx.drawImage(img, 0, 0);
+      let png = canvas.toDataURL("image/png");
+      let ref = document.createElement("a")
+      ref.href = png
+      ref.download = "COVID19-chart.png"
+      ref.click()
+      URL.revokeObjectURL(png);
+    };
+    img.src = url;
+  }
+
 }

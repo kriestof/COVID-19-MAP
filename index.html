@@ -60,6 +60,7 @@
 <div id="chart">
   <input type="text" id="search-country" placeholder="Type country name">
   <div id="result"><ul></ul></div>
+  <a id="download-chart" href="">Download png</a>
 </div>
 
 <div id="footer">
@@ -119,6 +120,5 @@ d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_co
 })
 .then(function(confirmedData) {
   map.displayMapForDate("3/16/20")
-
 })
 </script>
