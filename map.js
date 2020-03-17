@@ -24,6 +24,9 @@ function worldMap(confirmedData, svg) {
 
   let path = d3.geoPath().projection(projection)
   let scale = d3.scaleLog().domain([1,100000]).base(4)
+  svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "black")
+
+
   world = undefined
 
   let tooltip = undefined
@@ -64,6 +67,8 @@ function worldMap(confirmedData, svg) {
       displayMapForDate(dates[this.value])
     })
     dateEl.node().value = dates.length-1
+
+    d3.select("#map-outer a").on("click", downloadMapPng)
 
     return d3.json("https://unpkg.com/world-atlas@2.0.2/countries-110m.json").then((data) => world = data)
     .then(drawWorld)
@@ -130,9 +135,36 @@ function worldMap(confirmedData, svg) {
         each((d) => d.properties.value = countriesData[d.properties.name])
   }
 
+  function downloadMapPng() {
+    d3.event.preventDefault()
+
+    downloadSvg = d3.select(mapSvg.node().cloneNode(true))
+    downloadSvg.attr("width", mapSvg.node().width.baseVal.value)
+    downloadSvg.attr("height",mapSvg.node().height.baseVal.value)
+
+    downloadSvg
+      .append("text")
+      .text("source: covid19chart.info")
+      .attr("y", downloadSvg.attr("height")-7).attr("x", 5)
+      .attr("fill", "white")
+      .style("font-family", "sans-serif")
+      .style("font-size", "12px")
+
+      downloadSvg
+        .append("text")
+        .text(`date: ${d3.timeFormat("%d-%m-%Y")(new Date(d3.select("#selected-date").text()))}`)
+        .attr("y", downloadSvg.attr("height")-21).attr("x", 5)
+        .attr("fill", "white")
+        .style("font-family", "sans-serif")
+        .style("font-size", "12px")
+
+    downloadPng(downloadSvg, "COVID19-map.png")
+  }
+
   return {
     displayMapForDate: displayMapForDate,
     displayRegion: displayRegion,
-    initMap: initMap
+    initMap: initMap,
+    downloadMapPng: downloadMapPng
   }
 }

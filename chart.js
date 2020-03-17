@@ -41,7 +41,7 @@ function Chart(confirmedData, svg) {
     .selectAll("text").attr("transform", "rotate(-65)").attr("dx", "-.8em").attr("dy", ".15em").style("text-anchor", "end")
 
   svg.append("g").attr("class", "grid")
-  d3.select("#download-chart").on("click", () => this.downloadChart())
+  d3.select("#download-chart").on("click", () => this.downloadChartPng())
 
   d3.select("#chart #search-country").on("keyup", function() {
     if(this.value.length > 2) {
@@ -201,13 +201,8 @@ function Chart(confirmedData, svg) {
     }).sort()
   }
 
-  this.downloadChart = function(e) {
-    console.log("Aaa")
-    console.log(this)
+  this.downloadChartPng = function(e) {
     d3.event.preventDefault()
-    const MARGIN = {x: 60, y: 10}
-    const WIDTH = 800
-    const HEIGHT = 600
 
     downloadSvg = d3.select(chartSvg.node().cloneNode(true))
     downloadSvg.attr("width", chartSvg.node().width.baseVal.value)
@@ -224,26 +219,6 @@ function Chart(confirmedData, svg) {
       .style("font-family", "sans-serif")
       .style("font-size", "12px")
 
-    let svgString = new XMLSerializer().serializeToString(downloadSvg.node())
-
-    let canvas = document.createElement("canvas");
-    canvas.width=downloadSvg.attr("width"); canvas.height=downloadSvg.attr("height")
-
-    let ctx = canvas.getContext("2d");
-    let img = new Image();
-    let svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
-    let url = URL.createObjectURL(svg);
-
-    img.onload = function() {
-      ctx.drawImage(img, 0, 0);
-      let png = canvas.toDataURL("image/png");
-      let ref = document.createElement("a")
-      ref.href = png
-      ref.download = "COVID19-chart.png"
-      ref.click()
-      URL.revokeObjectURL(png);
-    };
-    img.src = url;
+    downloadPng(downloadSvg, "COVID19-chart.png")
   }
-
 }

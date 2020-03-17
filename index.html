@@ -56,6 +56,10 @@
       <option value="new">Daily new cases</option>
     </select>
   </div>
+
+  <div id="map-outer">
+    <a href="">Download png</a>
+  </div>
 </div>
 <div id="chart">
   <input type="text" id="search-country" placeholder="Type country name">
@@ -74,8 +78,9 @@
 <script src="https://unpkg.com/topojson-client@3"></script>
 <script src="chart.js"></script>
 <script src="map.js"></script>
+<script src="utils.js"></script>
 <script>
-let mapSvg = d3.select("#map").append("svg");
+let mapSvg = d3.select("#map-outer").append("svg");
 let chartSvg = d3.select("#chart").append("svg")
 let confirmedData = undefined
 
