@@ -68,8 +68,8 @@
 </div>
 
 <div id="footer">
-<span class="left">COVID-19 chart and map. Copyright 2020 Krzysztof Piwoński.</span> <a href="https://github.com/kriestof/COVID-19-chart" class="center">source code</a>
-<span class="right">Based on <a href="https://github.com/CSSEGISandData/COVID-19">data</a> collected by Johns Hopkins CSSE.</span>
+<span class="left">COVID-19 chart and map. Copyright 2020 Krzysztof Piwoński.</span> <a href="https://github.com/kriestof/COVID-19-chart" target="_parent">source code</a>
+<span class="right">Based on <a href="https://github.com/CSSEGISandData/COVID-19" target="_parent">data</a> collected by Johns Hopkins CSSE.</span>
 <div style="clear:both;"></div>
 </div>
 
@@ -84,7 +84,7 @@ let mapSvg = d3.select("#map-outer").append("svg");
 let chartSvg = d3.select("#chart").append("svg")
 let confirmedData = undefined
 
-let chart = undefined 
+let chart = undefined
 let map = undefined
 let mode = d3.select("#mode").node().value
 let region = d3.select("#region").node().value
