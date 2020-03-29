@@ -56,7 +56,7 @@ function worldMap(confirmedData, svg) {
          .style("font-size", "12px")
          .style("fill", "white");
 
-    tooltip = d3.select("body").append("div")
+    tooltip = d3.select("#map").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
