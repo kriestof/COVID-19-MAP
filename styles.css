@@ -13,8 +13,9 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. */
-body {margin: 0; margin-bottom:  50px; display: flex; flex-direction: row; flex-wrap: wrap;}
+body {margin: 0; margin-bottom:  50px; font-family: sans-serif;}
 
+h1 {margin: 30px 18px;}
 div.tooltip {
     position: absolute;
     text-align: center;
@@ -26,13 +27,16 @@ div.tooltip {
     border-radius: 8px;
     pointer-events: none;
 }
-#right-menu {float:right}
+#inner { display: flex; flex-direction: row; flex-wrap: wrap; position:relative;}
+#right-menu {float:right; padding: 15px 0;}
 #map {width: 900px;}
 #map #date {vertical-align: middle;}
 #map svg{width: 100%; height:500px; margin:0px auto; background: black;}
-#map #map-menu {height: 34px; padding: 8px; box-sizing: border-box; display: inline-block;}
+#map #map-menu {height: 60px; padding: 18px 19px; box-sizing: border-box; display: inline-block;}
 #chart {margin-left: 10px; width: 890px;}
 #chart svg{width: 100%; height:700px; margin:0px auto;}
+#chart #chart-menu {height:55px; padding-top: 15px; box-sizing: border-box;}
+#chart #chart-menu input {height: 30px;}
 #chart #search-country {width: 300px; box-sizing: border-box;}
 #chart #result {position: absolute; background-color: white; border: #CECECE solid 1px; width: 300px;}
 #chart #result ul {list-style: none; padding: 0; margin: 0;}

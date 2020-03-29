@@ -24,7 +24,7 @@ function worldMap(confirmedData, svg) {
 
   let path = d3.geoPath().projection(projection)
   let scale = d3.scaleLog().domain([100,1000000]).base(4)
-  svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "black")
+  svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "#4d4d4d")
 
 
   world = undefined
@@ -44,7 +44,7 @@ function worldMap(confirmedData, svg) {
        .attr("y", (d, i) => i * 25 + 20)
        .attr("width", 15)
        .attr("height", 15)
-       .attr("fill", (d) => d ? d3.interpolateReds(scale(d)):"#296e00")
+       .attr("fill", (d) => d ? d3.interpolateYlOrRd(scale(d)):"white")
 
      legend
          .append('text')
@@ -131,7 +131,7 @@ function worldMap(confirmedData, svg) {
 
     svg.selectAll("path").
         attr("fill", (d) => (countriesData[d.properties.name])?
-          d3.interpolateReds(scale(countriesData[d.properties.name])):"#296e00").
+          d3.interpolateYlOrRd(scale(countriesData[d.properties.name])):"white").
         each((d) => d.properties.value = countriesData[d.properties.name])
   }
 

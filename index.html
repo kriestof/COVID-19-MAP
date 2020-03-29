@@ -37,35 +37,42 @@
 </head>
 
 <body>
-<div id="map">
-  <div id="map-menu">
-    <span><strong>Choose date:</strong></span>
-    <input type="range" min="0" max="22" id="date">
-    <strong>Date:</strong> <span id="selected-date"></span>
-  </div>
-  <div id="right-menu">
-  <strong>Region:</strong>
-    <select id="region">
-      <option default value="world">World</option>
-      <option value="europe">Europe</option>
-    </select>
+<h1>History of COVID19 number of infected by country</h1>
 
-    <strong>Mode:</strong>
-    <select id="mode">
-      <option default value="all">All cases</option>
-      <option value="new">Daily new cases</option>
-    </select>
-  </div>
+<div id="inner">
+  <div id="map">
+    <div id="map-menu">
+      <span><strong>Choose date:</strong></span>
+      <input type="range" min="0" max="22" id="date">
+      <strong>Date:</strong> <span id="selected-date"></span>
+    </div>
+    <div id="right-menu">
+    <strong>Region:</strong>
+      <select id="region">
+        <option default value="world">World</option>
+        <option value="europe">Europe</option>
+      </select>
 
-  <div id="map-outer">
-    <a href="">Download png</a>
+      <strong>Mode:</strong>
+      <select id="mode">
+        <option default value="all">All cases</option>
+        <option value="new">Daily new cases</option>
+      </select>
+    </div>
+
+    <div id="map-outer">
+      <a href="">Download png</a>
+    </div>
+  </div>
+  <div id="chart">
+    <div id="chart-menu">
+      <input type="text" id="search-country" placeholder="Type country name">
+      <div id="result"><ul></ul></div>
+      <a id="download-chart" href="">Download png</a>
+    </div>
   </div>
 </div>
-<div id="chart">
-  <input type="text" id="search-country" placeholder="Type country name">
-  <div id="result"><ul></ul></div>
-  <a id="download-chart" href="">Download png</a>
-</div>
+
 
 <div id="footer">
 <span class="left">COVID-19 chart and map. Copyright 2020 Krzysztof Piwoński.</span> <a href="https://github.com/kriestof/COVID-19-chart" target="_parent">source code</a>
