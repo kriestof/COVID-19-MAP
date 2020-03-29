@@ -26,7 +26,7 @@ function Chart(confirmedData, svg) {
   this.countryColors = new Set()
 
   svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "white")
-  y = d3.scaleLog().domain([0.9,100000]).clamp(true).range([HEIGHT, 0])
+  y = d3.scaleLog().domain([100,1000000]).clamp(true).range([HEIGHT, 0])
   svg.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(10).tickFormat(
     function (d) {
       return (Math.round(Math.log10(d)) - Math.log10(d)) &&

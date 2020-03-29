@@ -23,7 +23,7 @@ function worldMap(confirmedData, svg) {
     projection = projection.scale(700).translate([300, 930])
 
   let path = d3.geoPath().projection(projection)
-  let scale = d3.scaleLog().domain([1,100000]).base(4)
+  let scale = d3.scaleLog().domain([100,1000000]).base(4)
   svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "black")
 
 
@@ -34,7 +34,7 @@ function worldMap(confirmedData, svg) {
 
   function initMap() {
     let legend = svg.selectAll('g.legendEntry')
-        .data([0].concat([1, 5, 20, 80, 250, 1000, 4000, 16000, 60000]))
+        .data([0].concat([100, 500, 1000, 5000, 25000, 100000, 500000]))
         .enter()
         .append('g').attr('class', 'legendEntry');
 
