@@ -107,8 +107,16 @@ d3.select("#region").on("change", function() {
   map.displayRegion(region)
 })
 
-d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv").then(function(data) {
- confirmedData = data
+let data = {}
+
+let promises = [
+  d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
+]
+
+Promise.all(promises).then(function(res) {
+  data.infected = res[0]
+}).then(function() {
+ confirmedData = data.infected
  const namesMap = {
    "US": "United States of America",
    "Korea, South": "South Korea",
@@ -120,17 +128,16 @@ d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_co
    "Taiwan*": "Taiwan"
  }
 
- data.map(function(d) {
+ data.infected.map(function(d) {
    if (d["Country/Region"] in namesMap)
      d["Country/Region"] = namesMap[d["Country/Region"]]
  })
- return data
-}).then(function(confirmedData) {
-  map = worldMap(confirmedData, mapSvg)
-  chart = new Chart(confirmedData, chartSvg)
+}).then(function() {
+  map = worldMap(data.infected, mapSvg)
+  chart = new Chart(data.infected, chartSvg)
   return map.initMap()
 })
-.then(function(confirmedData) {
+.then(function() {
   map.displayMapForDate("3/28/20")
 })
 </script>
