@@ -37,7 +37,30 @@
 </head>
 
 <body>
-<h1>History of COVID19 number of infected by country</h1>
+<h1>History of COVID19 by country</h1>
+
+<div id="formula-menu">
+  <div class="left-menu">
+    <strong>Choose indicator:</strong>
+    <select id="predefined-formulas">
+      <option value="infected">infected</option>
+      <option value="recovered">recovered</option>
+      <option value="deaths">deaths</option>
+      <option value="infected - recovered">currently infected</option>
+      <option value="recovered ./ infected * 10^2">recovered rate</option>
+      <option value="deaths ./ infected * 10^2">death rate</option>
+      <option value="round(infected ./ POP * 10^6)">infected per 1 mln.</option>
+    </select>
+  </div>
+
+  <div class="right-menu">
+    <strong>or type:</strong>
+    <input type="text" id="formula" value="infected">
+
+    <div id="formula-error"></div>
+  </div>
+
+</div>
 
 <div id="inner">
   <div id="map">
@@ -83,6 +106,7 @@
 <script src="https://unpkg.com/d3@5"></script>
 <script src="https://unpkg.com/d3-geo-projection@2.8"></script>
 <script src="https://unpkg.com/topojson-client@3"></script>
+<script src="https://unpkg.com/mathjs@6.6.2/dist/math.min.js"></script>
 <script src="chart.js"></script>
 <script src="map.js"></script>
 <script src="utils.js"></script>
@@ -95,6 +119,7 @@ let chart = undefined
 let map = undefined
 let mode = d3.select("#mode").node().value
 let region = d3.select("#region").node().value
+let data = {}
 
 d3.select("#mode").on("change", function() {
   mode = this.value
@@ -107,37 +132,182 @@ d3.select("#region").on("change", function() {
   map.displayRegion(region)
 })
 
-let data = {}
+d3.select("#predefined-formulas").on("change", function() {
+  d3.select("#formula").node().value = this.value
+  map.changeData(math.evaluate(this.value, data))
+  chart.changeData(math.evaluate(this.value, data))
+})
+
+
+document.getElementById("formula").addEventListener("keyup", function(e) {
+  if (e.keyCode === 13) {
+    try {
+      map.changeData(math.evaluate(this.value, data))
+      chart.changeData(math.evaluate(this.value, data))
+      d3.select("#formula").attr("class", "")
+      d3.select("#formula-error").text("")
+    } catch(err) {
+      d3.select("#formula").attr("class", "error")
+      d3.select("#formula-error").text(err.message)
+    }
+  }
+})
 
 let promises = [
-  d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
+  d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"),
+  d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"),
+  d3.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"),
+  d3.csv("data/wbank_indicators.csv")
 ]
 
-Promise.all(promises).then(function(res) {
-  data.infected = res[0]
-}).then(function() {
- confirmedData = data.infected
- const namesMap = {
-   "US": "United States of America",
-   "Korea, South": "South Korea",
-   "Korea, North": "North Korea",
-   "Bosnia and Herzegovina": "Bosnia and Herz.",
-   "North Macedonia": "Macedonia",
-   "Dominican Republic": "Dominican Rep.",
-   "Congo (Kinshasa)": "Dem. Rep. Congo",
-   "Taiwan*": "Taiwan"
- }
+function convertHopkins(indicatorName) {
+  removeCountries = new Set([
+    "Congo (Brazzaville)",
+    "Diamond Princess",
+    "Holy See",
+    "MS Zaandam",
+    "Saint Kitts and Nevis",
+    "Saint Lucia",
+    "Saint Vincent and the Grenadines",
+    "Taiwan*"
+  ])
 
- data.infected.map(function(d) {
-   if (d["Country/Region"] in namesMap)
-     d["Country/Region"] = namesMap[d["Country/Region"]]
- })
+  columns = data[indicatorName].columns
+  data[indicatorName] = data[indicatorName].filter(function(obj) { return !removeCountries.has(obj["Country/Region"])})
+  data[indicatorName].columns = columns
+
+  const namesMap = {
+    "US": "United States of America",
+    "Korea, South": "South Korea",
+    "Korea, North": "North Korea",
+    "Bosnia and Herzegovina": "Bosnia and Herz.",
+    "North Macedonia": "Macedonia",
+    "Dominican Republic": "Dominican Rep.",
+    "Congo (Kinshasa)": "Dem. Rep. Congo",
+    "Burma": "Myanmar",
+    "Central African Republic": "Central African Rep.",
+    "Cote d'Ivoire": "Côte d'Ivoire",
+    "Dominican Republic": "Dominican Rep.",
+    "Eswatini": "eSwatini",
+    "Equatorial Guinea": "Eq. Guinea"
+  }
+
+  data[indicatorName].map(function(d) {
+    if (d["Country/Region"] in namesMap)
+      d["Country/Region"] = namesMap[d["Country/Region"]]
+  })
+
+  data[indicatorName].sort((objX, objY) => objX["Country/Region"] > objY["Country/Region"])
+
+  data[indicatorName] = d3.nest()
+    .key((d) => d["Country/Region"])
+    .rollup(function(v) {
+      dates = data[indicatorName].columns.slice(4, data[indicatorName].columns.length)
+      res = {}
+
+      for (date of dates)
+        res[date] = d3.sum(v, (d) => parseFloat(d[date]))
+      return res
+    })
+    .entries(data[indicatorName])
+
+  countryNames = data[indicatorName].map(obj => obj.key)
+  data[indicatorName] = math.matrix(data[indicatorName].map((country) =>
+    Object.keys(country.value).map((key) => country.value[key])
+  ))
+}
+
+function fetchWbankIndicators(formula) {
+  let pr = math.parse(formula)
+  let wbankIndicators = []
+
+  pr.traverse(function(node) {
+    if (node.isSymbolNode && node.name.startsWith("WB_"))
+      wbankIndicators.push(node.name.slice(3).replace(/_/g, "."))
+  })
+
+  countryNamesSet = new Set(countryNames)
+
+  d3.json(`http://api.worldbank.org/v2/country/all/indicator/${wbankIndicators.join(";")}?format=json&date=2018&source=2&Per_page=10000`)
+    .then(function(wbankData) {
+      const namesMap = {
+        "Bahamas, The": "Bahamas",
+        "Bosnia and Herzegovina": "Bosnia and Herz.",
+        "Brunei Darussalam": "Brunei",
+        "Central African Republic": "Central African Rep.",
+        "Congo, Dem. Rep.": "Dem. Rep. Congo",
+        "Congo, Rep.": "Congo",
+        "Cote d'Ivoire": "Côte d'Ivoire",
+        "Czech Republic": "Czechia",
+        "Dominican Republic": "Dominican Rep.",
+        "Egypt, Arab Rep.": "Egypt",
+        "Equatorial Guinea": "Eq. Guinea",
+        "Eswatini": "eSwatini",
+        "Gambia, The": "Gambia",
+        "Iran, Islamic Rep.": "Iran",
+        "Kyrgyz Republic": "Kyrgyzstan",
+        "Lao PDR": "Laos",
+        "North Macedonia": "Macedonia",
+        "Korea, Dem. People’s Rep.": "North Korea",
+        "Russian Federation": "Russia",
+        "South Sudan": "S. Sudan",
+        "Slovak Republic": "Slovakia",
+        "Solomon Islands": "Solomon Is.",
+        "Korea, Rep.": "South Korea",
+        "Syrian Arab Republic": "Syria",
+        "United States": "United States of America",
+        "Venezuela, RB": "Venezuela",
+        "Yemen, Rep.": "Yemen"
+      }
+
+      wbankData[1].map(function(x) {if(x.country.value in namesMap) x.country.value = namesMap[x.country.value]})
+      wbankData = wbankData[1].filter((x) => countryNamesSet.has(x.country.value))
+      wbankData = d3.nest().key((d) => d.indicator.id).object(wbankData)
+
+      for (let indicatorName of wbankIndicators) {
+        wbankIndicator = wbankData[indicatorName]
+        wbankIndicator.sort((x, y) => x.country.value > y.country.value)
+        wbankIndicator = wbankIndicator.map((x) => x.value)
+
+        data["WB_"+indicatorName.replace(/\./g, "_")] = math.matrix(wbankIndicator.map(
+          function(val) {if(val === null) val = NaN; return math.multiply(math.ones(dates.length), val);}
+        ))
+      }
+    })
+}
+
+function processWbankIndicators() {
+  countryNamesSet = new Set(countryNames)
+  columns = wbankIndicators.columns
+  wbankIndicators = wbankIndicators.filter((obj) => countryNamesSet.has(obj.countryName))
+  wbankIndicators.columns = columns
+
+  for (let indicatorName of wbankIndicators.columns)
+    data[indicatorName] = math.matrix(wbankIndicators.map((countryObj) =>
+      math.multiply(math.ones(dates.length), parseFloat(countryObj[indicatorName]))))
+}
+
+let dates = undefined
+let countryNames = undefined
+let wbankIndicators = undefined
+
+Promise.all(promises).then(function(res) {
+  [data.infected, data.recovered, data.deaths] = res
+
+  dates = data.infected.columns.slice(4, data.infected.columns.length)
+  convertHopkins("infected")
+  convertHopkins("recovered")
+  convertHopkins("deaths")
+
+  wbankIndicators = res[3]
+  processWbankIndicators(res[3])
 }).then(function() {
-  map = worldMap(data.infected, mapSvg)
-  chart = new Chart(data.infected, chartSvg)
+  map = worldMap(countryNames, dates, mapSvg)
+  chart = new Chart(countryNames, dates, chartSvg)
+  chart.changeData(math.evaluate(d3.select("#formula").node().value, data))
   return map.initMap()
 })
 .then(function() {
-  map.displayMapForDate("3/28/20")
+  map.changeData(math.evaluate(d3.select("#formula").node().value, data))
 })
 </script>

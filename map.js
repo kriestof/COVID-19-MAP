@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-function worldMap(confirmedData, svg) {
+function worldMap(countryNames, dates, svg) {
   let projection = d3.geoRobinson()
   const PROJECTION_SCALE_WORLD = projection.scale()
   const PROJECTION_TRANSLATE_WORLD = projection.translate()
@@ -23,55 +23,77 @@ function worldMap(confirmedData, svg) {
     projection = projection.scale(700).translate([300, 930])
 
   let path = d3.geoPath().projection(projection)
-  let scale = d3.scaleLog().domain([100,1000000]).base(4)
+  let scale = d3.scaleLog().base(4)
   svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "#4d4d4d")
 
 
   world = undefined
 
+  let countriesData = undefined
   let tooltip = undefined
 
-
   function initMap() {
-    let legend = svg.selectAll('g.legendEntry')
-        .data([0].concat([100, 500, 1000, 5000, 25000, 100000, 500000]))
-        .enter()
-        .append('g').attr('class', 'legendEntry');
-
-    legend
-       .append('rect')
-       .attr("x", 20)
-       .attr("y", (d, i) => i * 25 + 20)
-       .attr("width", 15)
-       .attr("height", 15)
-       .attr("fill", (d) => d ? d3.interpolateYlOrRd(scale(d)):"white")
-
-     legend
-         .append('text')
-         .attr("x", 40)
-         .attr("y", (d, i) => i * 25 + 20)
-         .attr("dy", "0.8em")
-         .text((d,i) => d)
-         .style("font-family", "sans-serif")
-         .style("font-size", "12px")
-         .style("fill", "white");
-
     tooltip = d3.select("#map").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
-    let dates = confirmedData.columns.slice(4, confirmedData.columns.length)
-    let dateEl = d3.select("#date")
-      .attr("max", dates.length-1)
-      .on("input", function() {
-      displayMapForDate(dates[this.value])
-    })
-    dateEl.node().value = dates.length-1
+    d3.select("#date").on("input", function() {
+          displayMapForDate(dates[this.value])
+        })
 
     d3.select("#map-outer a").on("click", downloadMapPng)
 
-    return d3.json("https://unpkg.com/world-atlas@2.0.2/countries-110m.json").then((data) => world = data)
+    return d3.json("https://unpkg.com/world-atlas@2.0.2/countries-50m.json").then((data) => world = data)
     .then(drawWorld)
+  }
+
+  function updateLegend(vals) {
+    let legend = svg.selectAll('g.legendEntry')
+        .data(["Not avaliable", 0].concat(vals))
+    let legendEnter = legend.enter().append('g').attr('class', 'legendEntry');
+    legend.exit().remove()
+
+    legendEnter
+       .append('rect')
+       .attr("width", 15)
+       .attr("height", 15)
+       .attr("x", 20)
+       .attr("y", (d, i) => i * 25 + 20)
+
+     legendEnter
+         .append('text')
+         .attr("x", 40)
+         .attr("y", (d, i) => i * 25 + 22)
+         .attr("dy", "0.8em")
+         .style("font-family", "sans-serif")
+         .style("font-size", "12px")
+         .style("fill", "white");
+
+    svg.selectAll('g.legendEntry')
+      .select("text").text((d,i) => d)
+
+    svg.selectAll('g.legendEntry')
+      .select("rect")
+      .attr("fill", function(d) {
+        if (d === "Not avaliable") return "#ababab"
+        return d ? d3.interpolateYlOrRd(scale(d)):"white"
+      })
+  }
+
+  function changeData(data) {
+    countriesData = data
+
+    let dateEl = d3.select("#date")
+      .attr("max", dates.length-1)
+    dateEl.node().value = dates.length-1
+
+    maxVal =  math.max(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
+    minVal =  math.min(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
+
+    scale.domain([minVal+1, maxVal])
+    updateLegend(math.range(1/7, 1.01, 1/7).toArray()
+      .map((x) => parseFloat(scale.invert(x).toPrecision(2))))
+    displayMapForDate(dates[dates.length-1])
   }
 
   function drawWorld() {
@@ -79,13 +101,18 @@ function worldMap(confirmedData, svg) {
        .data(topojson.feature(world,world.objects.countries).features)
        .enter().append("path")
        .attr("d", path)
-       .attr("fill", "green")
        .style("cursor", "pointer");
     svg.selectAll("path")
     .on("mouseover", function(d) {
+      let val = 0
+      if (Number.isNaN(d.properties.value) || !Number.isFinite(d.properties.value))
+        val = "Not avaliable"
+      else
+        val = parseFloat(d.properties.value.toPrecision(7))
+
       d3.select(this).attr("stroke", "#004d76").attr("stroke-width", "3")
       tooltip
-        .html(`country: ${d.properties.name} </br> value: ${d.properties.value ? d.properties.value:0}`)
+        .html(`country: ${d.properties.name} </br> value: ${val}`)
         .style("top", d3.mouse(this)[1] + "px")
         .style("left", d3.mouse(this)[0] + "px")
         .style("opacity", 0.9)
@@ -124,15 +151,17 @@ function worldMap(confirmedData, svg) {
     prevDay.setDate(prevDay.getDate()-1)
     prevDay = d3.timeFormat("%-m/%-d/%y")(prevDay)
 
-    countriesData =  d3.nest()
-      .key((d) => d["Country/Region"])
-      .rollup((v) => d3.sum(v, (d) => mode == "all"? parseFloat(d[date]):parseFloat(d[date]) - parseFloat(d[prevDay])))
-      .object(confirmedData)
-
     svg.selectAll("path").
-        attr("fill", (d) => (countriesData[d.properties.name])?
-          d3.interpolateYlOrRd(scale(countriesData[d.properties.name])):"white").
-        each((d) => d.properties.value = countriesData[d.properties.name])
+        attr("fill", function(d) {
+          if (countryNames.indexOf(d.properties.name) == -1) return "#ababab"
+          val = math.subset(countriesData, math.index(countryNames.indexOf(d.properties.name), dates.indexOf(date)))
+          if (Number.isNaN(val) || !Number.isFinite(val)) return "#ababab"
+          return val ? d3.interpolateYlOrRd(scale(val)):"white"
+        }).
+        each(function(d) {
+          if (countryNames.indexOf(d.properties.name) != -1)
+            d.properties.value = math.subset(countriesData, math.index(countryNames.indexOf(d.properties.name), dates.indexOf(date)))
+        })
   }
 
   function downloadMapPng() {
@@ -158,10 +187,20 @@ function worldMap(confirmedData, svg) {
         .style("font-family", "sans-serif")
         .style("font-size", "12px")
 
+      downloadSvg
+        .append("text")
+        .text("formula: " + d3.select("#formula").node().value)
+        .attr("y", downloadSvg.attr("height")-37).attr("x", 5)
+        .attr("fill", "white")
+        .style("font-family", "sans-serif")
+        .style("font-size", "12px")
+
+
     downloadPng(downloadSvg, "COVID19-map.png")
   }
 
   return {
+    changeData: changeData,
     displayMapForDate: displayMapForDate,
     displayRegion: displayRegion,
     initMap: initMap,

@@ -15,7 +15,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>. */
 body {margin: 0; margin-bottom:  50px; font-family: sans-serif; position: relative}
 
-h1 {margin: 30px 18px;}
+h1 {margin: 30px 18px 50px 18px;}
 div.tooltip {
     position: absolute;
     text-align: center;
@@ -34,7 +34,7 @@ div.tooltip {
 #map svg{width: 100%; height:500px; margin:0px auto; background: black;}
 #map #map-menu {height: 60px; padding: 18px 19px; box-sizing: border-box; display: inline-block;}
 #chart {margin-left: 10px; width: 890px;}
-#chart svg{width: 100%; height:700px; margin:0px auto;}
+#chart svg{width: 100%; height:710px; margin:0px auto;}
 #chart #chart-menu {height:55px; padding-top: 15px; box-sizing: border-box;}
 #chart #chart-menu input {height: 30px;}
 #chart #search-country {width: 300px; box-sizing: border-box;}
@@ -66,3 +66,11 @@ div.tooltip {
   float:right;
   margin-right: 10px;
 }
+
+#formula-menu {padding-left: 18px; width: 900px; height: 80px; margin-bottom: 10px; position: relative;}
+#formula-menu #formula {width: 400px; padding: 15px; border-radius: 0px; border: 2px solid #cecece;}
+#formula-menu #formula:focus {border-color: #ababab;}
+#formula-menu #formula.error, #formula-menu #formula.error:focus {border-color: #cc0000}
+#formula-menu #formula-error {color: #c00; text-align: center; padding-top: 10px;}
+#formula-menu .left-menu {padding: 13px 0; display: inline-block;}
+#formula-menu .right-menu {float: right; margin-right: 15px}

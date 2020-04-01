@@ -15,32 +15,34 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-function Chart(confirmedData, svg) {
+function Chart(countryNames, dates, svg) {
   const MARGIN = {x: 60, y: 10}
   const WIDTH = 800
   const HEIGHT = 600
 
+  this.drawYAxis = function() {
+    svg.append("g").attr("class", "grid y-grid").call(d3.axisLeft(y).ticks(10).tickFormat(
+      function (d) {
+        return (Math.round(Math.log10(d)) - Math.log10(d)) &&
+          (Math.round(Math.log10(d/2)) - Math.log10(d/2))  ? '':d3.format(",.0f")(d) ;
+      }
+
+    )).attr("transform", `translate(${MARGIN.x}, ${MARGIN.y})`)
+  }
+
   let parent = this
-  this.allCountryNames = [...new Set(confirmedData.map((d) => d["Country/Region"]))]
+  this.allCountryNames = countryNames
   this.countries = []
   this.countryColors = new Set()
+  this.countriesData = undefined
 
   svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "white")
-  y = d3.scaleLog().domain([100,1000000]).clamp(true).range([HEIGHT, 0])
-  svg.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(10).tickFormat(
-    function (d) {
-      return (Math.round(Math.log10(d)) - Math.log10(d)) &&
-        (Math.round(Math.log10(d/2)) - Math.log10(d/2))  ? '':d3.format(",.0f")(d) ;
-    }
+  y = d3.scaleLog().clamp(true).range([HEIGHT, 0])
 
-  )).attr("transform", `translate(${MARGIN.x}, ${MARGIN.y})`)
-
-  dataCols = confirmedData.columns.slice(4, confirmedData.columns.length)
-  x = d3.scaleTime().domain([new Date(dataCols[0]), new Date(dataCols[dataCols.length-1])]).range([ 0, WIDTH])
-  svg.append("g").attr("class", "grid").attr("transform", `translate(${MARGIN.x}, ${HEIGHT+MARGIN.y})`).call(d3.axisBottom(x).ticks(dataCols.length).tickFormat(d3.timeFormat("%Y-%m-%d")))
+  x = d3.scaleTime().domain([new Date(dates[0]), new Date(dates[dates.length-1])]).range([ 0, WIDTH])
+  svg.append("g").attr("class", "grid").attr("transform", `translate(${MARGIN.x}, ${HEIGHT+MARGIN.y})`).call(d3.axisBottom(x).ticks(dates.length).tickFormat(d3.timeFormat("%Y-%m-%d")))
     .selectAll("text").attr("transform", "rotate(-65)").attr("dx", "-.8em").attr("dy", ".15em").style("text-anchor", "end")
 
-  svg.append("g").attr("class", "grid")
   d3.select("#download-chart").on("click", () => this.downloadChartPng())
 
   d3.select("#chart #search-country").on("keyup", function() {
@@ -65,26 +67,17 @@ function Chart(confirmedData, svg) {
     if (this.countries.length >= 10) return undefined
     if (this.countries.filter((x) => x.name == countryName).length) return undefined
 
-    dates = confirmedData.columns.slice(4, confirmedData.columns.length)
-    tsData = confirmedData.filter((d) => d["Country/Region"] == countryName)
-    groupedTsData = dataCols.map(function(date) {
-   return d3.nest()
-     .key((d) => d["Country/Region"])
-     .rollup((v) => d3.sum(v, (d) => parseFloat(d[date])))
-     .object(tsData)[countryName]
- })
-
+    tsData = math.subset(this.countriesData, math.index(countryNames.indexOf(countryName), math.range(0, dates.length))).toArray()[0]
     diffGroupedTsData = [undefined]
-    for (let i = 0; i < groupedTsData.length-1; i+=1) {
-      let dif = groupedTsData[i+1] - groupedTsData[i]
+    for (let i = 0; i < tsData.length-1; i+=1) {
+      let dif = tsData[i+1] - tsData[i]
       diffGroupedTsData.push(dif > 0 ? dif:0)
     }
 
     chartArray = []
-
-    for (i = 0; i < groupedTsData.length; i+=1)
-      chartArray.push({time: new Date(dates[i]), valueAll: groupedTsData[i], valueNew: diffGroupedTsData[i]})
-
+    for (i = 0; i < tsData.length; i+=1)
+      if (!Number.isNaN(tsData[i]) && Number.isFinite(tsData[i]))
+        chartArray.push({time: new Date(dates[i]), valueAll: tsData[i], valueNew: diffGroupedTsData[i]})
     this.countries.push({name: countryName, data: chartArray, color: this._getColor()})
 
     this.drawLinesChart()
@@ -126,7 +119,7 @@ function Chart(confirmedData, svg) {
       })
       .append("title").text(function (d) {
         let countryName = d3.select(this.parentNode.parentNode).datum().name
-        return `country: ${countryName}\n value: ${parent._getChartValue(d)} \n date: ${d3.timeFormat("%Y-%m-%d")(d.time)}`
+        return `country: ${countryName}\n value: ${parseFloat(parent._getChartValue(d).toPrecision(7))} \n date: ${d3.timeFormat("%Y-%m-%d")(d.time)}`
       })
   }
 
@@ -176,11 +169,28 @@ function Chart(confirmedData, svg) {
     this.countries = this.countries.filter((el) => el.name != removedCountry.name)
     chartSvg.selectAll('g.legendEntry').remove()
     this._drawLegendChart()
-
     this.drawLinesChart()
 
     if (this.countries.length < 10) d3.select("#chart #search-country").attr("disabled", null)
     this.countryColors.delete(removedCountry.color)
+  }
+
+  this.changeData = function(data) {
+    this.countriesData = data
+    maxVal =  math.max(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
+    minVal =  math.min(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
+
+    y.domain([minVal+0.9, maxVal])
+    svg.select(".y-grid").remove()
+    this.drawYAxis()
+
+    this._drawLegendChart()
+    this.drawLinesChart()
+
+    for (let country of this.countries) {
+      this.removeFromChart(country)
+      this.drawChart(country.name)
+    }
   }
 
   this._getColor = function() {
@@ -215,6 +225,14 @@ function Chart(confirmedData, svg) {
       .append("text")
       .text("source: covid19chart.info")
       .attr("y", downloadSvg.attr("height")-5).attr("x", MARGIN.x)
+      .attr("fill", "#595959")
+      .style("font-family", "sans-serif")
+      .style("font-size", "12px")
+
+    downloadSvg
+      .append("text")
+      .text("formula: " + d3.select("#formula").node().value)
+      .attr("y", downloadSvg.attr("height")-20).attr("x", MARGIN.x)
       .attr("fill", "#595959")
       .style("font-family", "sans-serif")
       .style("font-size", "12px")
