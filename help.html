@@ -1,0 +1,74 @@
+<!-- Copyright 2020 Krzysztof Piwoński <piwonski.kris@gmail.com> -->
+<!--
+    This file is a part of COVID-19 chart.
+
+    COVID-19 chart is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    COVID-19 chart is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ -->
+
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+ <!-- Global site tag (gtag.js) - Google Analytics -->
+ <script async src="https://www.googletagmanager.com/gtag/js?id=UA-160718087-1"></script>
+ <script>
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments);}
+   gtag('js', new Date());
+
+   gtag('config', 'UA-160718087-1');
+ </script>
+
+ <title>COVID-19 chart and map</title>
+ <meta name="description" content="Check how COVID-19 disease develops worldwide.">
+ <meta name="keywords" content="COVID-19,chart,map">
+ <meta name="author" content="Krzysztof Piwoński">
+ <link rel="stylesheet" href="help.css">
+</head>
+
+<body>
+
+<h1>History of COVID19 by country - help</h1>
+
+<h2>Data</h2>
+
+Data are based <a href="https://github.com/CSSEGISandData/COVID-19" target="_parent">Johns Hopkins CSSE</a> and <a href="https://data.worldbank.org/" target="_parent">World Bank</a>. <br><br>
+
+Johns Hopkins CSSE data provide COVID19 daily-based data. Formula allows to assess three COVID19 parameters: <strong>infected</strong>, <strong>recovered</strong> and <strong>dead</strong>.
+<br><br>
+World Bank data allows to modify mentioned above COVID19 indicators with World Bank data indicators.
+Any indicator from <a href="https://data.worldbank.org/" target="_parent">https://www.data.worldbank.org</a> can be used.
+Indicators would be automatically fetched when formula is entered.
+However little modification to World Bank indicator naming is required.
+All world bank indicator names should begin with <strong>WB_</strong> prefix.
+Parts of indicator name should be merged with dash (_) instead of dot (.).
+For instance World Bank indicator name <strong>SP.POP.TOTL</strong> should be translated to <strong>WB_SP_POP_TOTL</strong>
+
+<h2>Formula syntax</h2>
+
+Formula syntax is based on <a href="https://mathjs.org/docs/expressions/syntax.html">mathjs</a> library.
+Formulas consist of scalars, indicators represended by matrices and operations between them.
+Standard arithmetic operations are supported and should be straightforward.
+However for clarity they are outlined here.
+
+<ul>
+  <li>Paranthesis <strong>(</strong> and <strong>)</strong> regulates operator precedence</li>
+  <li><strong>+</strong> and <strong>-</strong> operations can be used both between scalars and matrices</li>
+  <li><strong>*</strong> and <strong>/</strong> can be used between scalars or scalar and matrix</li>
+  <li><strong>.*</strong> and <strong>./</strong> operators can be used between matrices to multiply or divide matrices element-wise</li>
+  <li><strong>round()</strong> function can be used to round number to integer</li>
+</ul>
+For example formula: <i>round(infected ./ WB_SP_POP_TOTL * 10^6)</i> represents number of infected per one million people.
+
+</body>
