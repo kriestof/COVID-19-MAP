@@ -44,7 +44,7 @@ div.tooltip {
 #chart #result ul li:hover {background-color: #CECECE;}
 
 #map-outer {position:relative;}
-#map-outer a { position:absolute; left: 20px; bottom: 10px; color:white; text-decoration: none; border: 1px solid white; padding: 5px; text-transform: uppercase; font-size: 14px;}
+#map-outer a { position:absolute; left: 20px; bottom: 10px; color:white; text-decoration: none; border: 1px solid white; padding: 5px; text-transform: uppercase; font-size: 14px; background-color: #4d4d4d;}
 
 #formula-menu {padding-left: 18px; width: 900px; height: 80px; margin-bottom: 10px; position: relative;}
 #formula-menu #formula {width: 400px; padding: 15px; border-radius: 0px; border: 2px solid #cecece;}

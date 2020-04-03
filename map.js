@@ -17,14 +17,25 @@
 
 function worldMap(countryNames, dates, svg) {
   let projection = d3.geoRobinson()
-  const PROJECTION_SCALE_WORLD = projection.scale()
-  const PROJECTION_TRANSLATE_WORLD = projection.translate()
-  if (region == "europe")
-    projection = projection.scale(700).translate([300, 930])
+  const REG_PROJECTION = {
+    "world": {scale: projection.scale(), translate: projection.translate()},
+    "europe": {scale: 700, translate: [300, 930]},
+    "australia": {scale: 450, translate: [-600, 50]},
+    "asia": {scale: 400, translate: [-100, 500]},
+    "africa": {scale: 350, translate: [300, 260]},
+    "samerica": {scale: 350, translate: [800, 140]},
+    "namerica": {scale: 450, translate: [1200, 600]}
+  }
+
+    projection = projection
+      .scale(REG_PROJECTION[region].scale)
+      .translate(REG_PROJECTION[region].translate)
 
   let path = d3.geoPath().projection(projection)
   let scale = d3.scaleLog().base(4)
   svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "#4d4d4d")
+  svg.append("g").attr("class", "country-paths")
+  svg.append("rect").attr("width", "130px").attr("height", "250px").attr("fill", "#525252")
 
 
   world = undefined
@@ -97,7 +108,7 @@ function worldMap(countryNames, dates, svg) {
   }
 
   function drawWorld() {
-    svg.selectAll("path")
+    svg.select(".country-paths").selectAll("path")
        .data(topojson.feature(world,world.objects.countries).features)
        .enter().append("path")
        .attr("d", path)
@@ -127,19 +138,10 @@ function worldMap(countryNames, dates, svg) {
   }
 
   function displayRegion(region) {
-    if (region == "world") {
-      projection = projection.scale(PROJECTION_SCALE_WORLD).translate(PROJECTION_TRANSLATE_WORLD)
-      svg.selectAll("path").remove()
-      drawWorld()
-      displayMapForDate()
-    }
-
-    if (region == "europe") {
-      projection = projection.scale(700).translate([300, 930])
-      svg.selectAll("path").remove()
-      drawWorld()
-      displayMapForDate()
-    }
+    projection.scale(REG_PROJECTION[region].scale).translate(REG_PROJECTION[region].translate)
+    svg.selectAll("path").remove()
+    drawWorld()
+    displayMapForDate()
   }
 
   function displayMapForDate(date) {
@@ -171,6 +173,12 @@ function worldMap(countryNames, dates, svg) {
     downloadSvg.attr("width", mapSvg.node().width.baseVal.value)
     downloadSvg.attr("height",mapSvg.node().height.baseVal.value)
 
+    downloadSvg.append("rect")
+      .attr("y", downloadSvg.attr("height")-55)
+      .attr("height", 55)
+      .attr("width", d3.select("#formula").node().value.length*8+20)
+      .attr("fill", "#525252")
+
     downloadSvg
       .append("text")
       .text("source: covid19chart.info")
@@ -194,7 +202,6 @@ function worldMap(countryNames, dates, svg) {
         .attr("fill", "white")
         .style("font-family", "sans-serif")
         .style("font-size", "12px")
-
 
     downloadPng(downloadSvg, "COVID19-map.png")
   }

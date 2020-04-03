@@ -75,12 +75,17 @@
       <select id="region">
         <option default value="world">World</option>
         <option value="europe">Europe</option>
+        <option value="asia">Asia</option>
+        <option value="africa">Africa</option>
+        <option value="samerica">South America</option>
+        <option value="namerica">North America</option>
+        <option value="australia">Australia</option>
       </select>
 
       <strong>Mode:</strong>
       <select id="mode">
-        <option default value="all">All cases</option>
-        <option value="new">Daily new cases</option>
+        <option default value="all">Indicator</option>
+        <option value="new">Daily increase</option>
       </select>
     </div>
 
@@ -114,7 +119,6 @@
 <script>
 let mapSvg = d3.select("#map-outer").append("svg");
 let chartSvg = d3.select("#chart").append("svg")
-let confirmedData = undefined
 
 let chart = undefined
 let map = undefined
