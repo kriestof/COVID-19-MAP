@@ -97,7 +97,13 @@ function convertHopkins(indicatorName) {
 }
 
 function fetchWbankIndicators(formula) {
-  let pr = math.parse(formula)
+  let pr = undefined
+  try {
+    pr = math.parse(formula)
+  } catch (err) {
+    return Promise.reject(err)
+  }
+
   let wbankIndicators = []
 
   pr.traverse(function(node) {
@@ -147,6 +153,9 @@ function fetchWbankIndicators(formula) {
         "Venezuela, RB": "Venezuela",
         "Yemen, Rep.": "Yemen"
       }
+
+      if (wbankData[0].message)
+        return Promise.reject("Invalid World Bank indicator name")
 
       wbankData[1].map(function(x) {if(x.country.value in namesMap) x.country.value = namesMap[x.country.value]})
       wbankData = wbankData[1].filter((x) => countryNamesSet.has(x.country.value))

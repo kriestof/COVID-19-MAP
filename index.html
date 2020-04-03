@@ -46,7 +46,7 @@
       <option value="infected">infected</option>
       <option value="recovered">recovered</option>
       <option value="deaths">deaths</option>
-      <option value="infected - recovered">currently infected</option>
+      <option value="infected - recovered - deaths">currently infected</option>
       <option value="recovered ./ infected * 10^2">recovered rate</option>
       <option value="deaths ./ infected * 10^2">death rate</option>
       <option value="round(infected ./ WB_SP_POP_TOTL * 10^6)">infected per 1 mln.</option>
@@ -55,9 +55,10 @@
 
   <div class="right-menu">
     <span class="help-text"><strong>or type: </strong> <br> <a href="/help.html">help?</a></span>
-    <input type="text" id="formula" value="infected">
-
-    <div id="formula-error"></div>
+    <div>
+      <input type="text" id="formula" value="infected">
+      <div id="formula-error"></div>
+    </div>
   </div>
 
 </div>
@@ -142,25 +143,27 @@ d3.select("#predefined-formulas").on("change", function() {
 function changeData(formula) {
   d3.select("#formula").attr("disabled", "true")
   return fetchWbankIndicators(formula).then(function() {
-    map.changeData(math.evaluate(formula, data))
-    chart.changeData(math.evaluate(formula, data))
+    let evalData = undefined
+    try {evalData = math.evaluate(formula, data)}
+    catch (err) { return Promise.reject(err.message)}
+
+    map.changeData(evalData)
+    chart.changeData(evalData)
     d3.select("#formula").attr("disabled", null)
-  })
+    d3.select("#formula").attr("class", "")
+    d3.select("#formula-error").text("")
+  }).catch(handleFormulaError)
+}
+
+function handleFormulaError(err) {
+  d3.select("#formula").attr("class", "error")
+  d3.select("#formula-error").text(err)
+  d3.select("#formula").attr("disabled", null)
 }
 
 document.getElementById("formula").addEventListener("keyup", function(e) {
-  if (e.keyCode === 13) {
-    try {
-      let formula = this.value
-      changeData(formula).then(function() {
-        d3.select("#formula").attr("class", "")
-        d3.select("#formula-error").text("")
-      })
-    } catch(err) {
-      d3.select("#formula").attr("class", "error")
-      d3.select("#formula-error").text(err.message)
-    }
-  }
+  if (e.keyCode === 13)
+    changeData(this.value)
 })
 
 let promises = [
@@ -178,7 +181,8 @@ Promise.all(promises).then(function(res) {
 }).then(function() {
   map = worldMap(countryNames, dates, mapSvg)
   chart = new Chart(countryNames, dates, chartSvg)
-  return fetchWbankIndicators(d3.select("#formula").node().value).then(map.initMap)
+  return fetchWbankIndicators(d3.select("#formula").node().value)
+    .catch(handleFormulaError).then(map.initMap)
 })
 .then(function() {
   changeData(d3.select("#formula").node().value)
