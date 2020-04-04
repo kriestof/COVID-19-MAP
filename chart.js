@@ -21,7 +21,14 @@ function Chart(countryNames, dates, svg) {
   const HEIGHT = 600
 
   this.drawYAxis = function() {
-    svg.append("g").attr("class", "grid y-grid").call(d3.axisLeft(y).tickFormat((d) => d3.format(",.0f")(d.toPrecision(2)))).attr("transform", `translate(${MARGIN.x}, ${MARGIN.y})`)
+    svg.append("g").attr("class", "grid y-grid").call(d3.axisLeft(y)
+      .tickFormat((d) => d3.format(",.0f")(d.toPrecision(2))))
+      .attr("transform", `translate(${MARGIN.x}, ${MARGIN.y})`)
+    svg.append("g").attr("class", "grid y-grid y-gridlines").call(d3.axisLeft(y)
+      .tickFormat("").tickSize(-WIDTH))
+      .attr("transform", `translate(${MARGIN.x}, ${MARGIN.y})`)
+    svg.select(".y-gridlines .domain").remove()
+    svg.selectAll(".y-gridlines line").attr("stroke", "#cecece")
   }
 
   let parent = this
@@ -35,8 +42,6 @@ function Chart(countryNames, dates, svg) {
   y.ticks = ticksSymlog
 
   x = d3.scaleTime().domain([new Date(dates[0]), new Date(dates[dates.length-1])]).range([ 0, WIDTH])
-  svg.append("g").attr("class", "grid").attr("transform", `translate(${MARGIN.x}, ${HEIGHT+MARGIN.y})`).call(d3.axisBottom(x).ticks(dates.length).tickFormat(d3.timeFormat("%Y-%m-%d")))
-    .selectAll("text").attr("transform", "rotate(-65)").attr("dx", "-.8em").attr("dy", ".15em").style("text-anchor", "end")
 
   d3.select("#download-chart").on("click", () => this.downloadChartPng())
 
@@ -171,8 +176,12 @@ function Chart(countryNames, dates, svg) {
     minVal =  math.min(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
 
     y.domain([minVal, maxVal])
-    svg.select(".y-grid").remove()
+    svg.selectAll(".y-grid").remove()
     this.drawYAxis()
+
+    svg.select(".x-grid").remove()
+    svg.append("g").attr("class", "grid x-grid").attr("transform", `translate(${MARGIN.x}, ${HEIGHT+MARGIN.y})`).call(d3.axisBottom(x).ticks(dates.length).tickFormat(d3.timeFormat("%Y-%m-%d")))
+      .selectAll("text").attr("transform", "rotate(-65)").attr("dx", "-.8em").attr("dy", ".15em").style("text-anchor", "end")
 
     this._drawLegendChart()
     this.drawLinesChart()
