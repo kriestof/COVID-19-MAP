@@ -32,7 +32,7 @@ function worldMap(countryNames, dates, svg) {
       .translate(REG_PROJECTION[region].translate)
 
   let path = d3.geoPath().projection(projection)
-  let scale = d3.scaleLog().base(4)
+  let scale = d3.scaleSymlog().range([1, 0])
   svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "#4d4d4d")
   svg.append("g").attr("class", "country-paths")
   svg.append("rect").attr("width", "130px").attr("height", "250px").attr("fill", "#525252")
@@ -60,7 +60,7 @@ function worldMap(countryNames, dates, svg) {
 
   function updateLegend(vals) {
     let legend = svg.selectAll('g.legendEntry')
-        .data(["Not avaliable", 0].concat(vals))
+        .data(["Not avaliable"].concat(vals))
     let legendEnter = legend.enter().append('g').attr('class', 'legendEntry');
     legend.exit().remove()
 
@@ -87,7 +87,7 @@ function worldMap(countryNames, dates, svg) {
       .select("rect")
       .attr("fill", function(d) {
         if (d === "Not avaliable") return "#ababab"
-        return d ? d3.interpolateYlOrRd(scale(d)):"white"
+        return d3.interpolateRdBu(scale(d))
       })
   }
 
@@ -101,9 +101,11 @@ function worldMap(countryNames, dates, svg) {
     maxVal =  math.max(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
     minVal =  math.min(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
 
-    scale.domain([minVal+1, maxVal])
-    updateLegend(math.range(1/7, 1.01, 1/7).toArray()
-      .map((x) => parseFloat(scale.invert(x).toPrecision(2))))
+    absMax = Math.max(Math.abs(minVal), Math.abs(maxVal))
+    scale.domain([-absMax, absMax])
+
+    updateLegend(math.range(scale(minVal), scale(maxVal)-0.01, (scale(maxVal)-scale(minVal))/7).toArray()
+      .map((x) => parseFloat(Math.round(scale.invert(x).toPrecision(2)))))
     displayMapForDate(dates[dates.length-1])
   }
 
@@ -158,7 +160,7 @@ function worldMap(countryNames, dates, svg) {
           if (countryNames.indexOf(d.properties.name) == -1) return "#ababab"
           val = math.subset(countriesData, math.index(countryNames.indexOf(d.properties.name), dates.indexOf(date)))
           if (Number.isNaN(val) || !Number.isFinite(val)) return "#ababab"
-          return val ? d3.interpolateYlOrRd(scale(val)):"white"
+          return d3.interpolateRdBu(scale(val))
         }).
         each(function(d) {
           if (countryNames.indexOf(d.properties.name) != -1)
@@ -176,7 +178,7 @@ function worldMap(countryNames, dates, svg) {
     downloadSvg.append("rect")
       .attr("y", downloadSvg.attr("height")-55)
       .attr("height", 55)
-      .attr("width", d3.select("#formula").node().value.length*8+20)
+      .attr("width", Math.max(savedFormula.length*6.5+80, 165))
       .attr("fill", "#525252")
 
     downloadSvg
@@ -197,7 +199,7 @@ function worldMap(countryNames, dates, svg) {
 
       downloadSvg
         .append("text")
-        .text("formula: " + d3.select("#formula").node().value)
+        .text("formula: " + savedFormula)
         .attr("y", downloadSvg.attr("height")-37).attr("x", 5)
         .attr("fill", "white")
         .style("font-family", "sans-serif")

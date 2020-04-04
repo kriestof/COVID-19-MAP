@@ -55,7 +55,7 @@
 
   <div class="right-menu">
     <span class="help-text"><strong>or type: </strong> <br> <a href="/help.html">help?</a></span>
-    <div>
+    <div id="formula-wrapper">
       <input type="text" id="formula" value="infected">
       <div id="formula-error"></div>
     </div>
@@ -85,7 +85,7 @@
       <strong>Mode:</strong>
       <select id="mode">
         <option default value="all">Indicator</option>
-        <option value="new">Daily increase</option>
+        <option value="increase">Daily increase</option>
       </select>
     </div>
 
@@ -127,11 +127,11 @@ let region = d3.select("#region").node().value
 let data = {}
 let dates = undefined
 let countryNames = undefined
+let savedFormula = undefined
 
 d3.select("#mode").on("change", function() {
   mode = this.value
-  map.displayMapForDate()
-  chart.drawLinesChart()
+  changeData()
 })
 
 d3.select("#region").on("change", function() {
@@ -145,12 +145,23 @@ d3.select("#predefined-formulas").on("change", function() {
 })
 
 function changeData(formula) {
+  if (!formula)
+    formula = savedFormula
+
   d3.select("#formula").attr("disabled", "true")
   return fetchWbankIndicators(formula).then(function() {
     let evalData = undefined
     try {evalData = math.evaluate(formula, data)}
     catch (err) { return Promise.reject(err.message)}
 
+    if (mode === "increase") {
+      let up = evalData.subset(math.index(math.range(0, evalData.size()[0]), math.range(1, evalData.size()[1])))
+      let down = evalData.subset(math.index(math.range(0, evalData.size()[0]), math.range(0, evalData.size()[1]-1)))
+      evalData = math.subtract(up, down)
+      evalData = math.concat(math.zeros(evalData.size()[0]).resize([evalData.size()[0], 1]), evalData)
+    }
+
+    savedFormula = formula
     map.changeData(evalData)
     chart.changeData(evalData)
     d3.select("#formula").attr("disabled", null)
@@ -162,6 +173,7 @@ function changeData(formula) {
 function handleFormulaError(err) {
   d3.select("#formula").attr("class", "error")
   d3.select("#formula-error").text(err)
+  d3.select("#formula-error").attr("title", err)
   d3.select("#formula").attr("disabled", null)
 }
 

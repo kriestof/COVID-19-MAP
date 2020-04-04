@@ -47,10 +47,11 @@ div.tooltip {
 #map-outer a { position:absolute; left: 20px; bottom: 10px; color:white; text-decoration: none; border: 1px solid white; padding: 5px; text-transform: uppercase; font-size: 14px; background-color: #4d4d4d;}
 
 #formula-menu {padding-left: 18px; width: 900px; height: 80px; margin-bottom: 10px; position: relative;}
-#formula-menu #formula {width: 400px; padding: 15px; border-radius: 0px; border: 2px solid #cecece;}
+#formula-menu #formula-wrapper {width:430px;}
+#formula-menu #formula {width: 100%; padding: 15px; border-radius: 0px; border: 2px solid #cecece;}
 #formula-menu #formula:focus {border-color: #ababab;}
 #formula-menu #formula.error, #formula-menu #formula.error:focus {border-color: #cc0000}
-#formula-menu #formula-error {color: #c00; text-align: center; padding-top: 10px;}
+#formula-menu #formula-error {color: #c00; text-align: center; padding-top: 10px;   text-overflow: ellipsis; overflow: hidden; height: 1.2em; white-space: nowrap;}
 #formula-menu .left-menu {padding: 13px 0; display: inline-block;}
 #formula-menu .right-menu {float: right; margin-right: 15px; display: flex;}
 #formula-menu .right-menu .help-text {display: inline-block; margin-top: 19px; margin-right: 5px; text-align: center;}

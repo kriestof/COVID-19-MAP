@@ -21,13 +21,7 @@ function Chart(countryNames, dates, svg) {
   const HEIGHT = 600
 
   this.drawYAxis = function() {
-    svg.append("g").attr("class", "grid y-grid").call(d3.axisLeft(y).ticks(10).tickFormat(
-      function (d) {
-        return (Math.round(Math.log10(d)) - Math.log10(d)) &&
-          (Math.round(Math.log10(d/2)) - Math.log10(d/2))  ? '':d3.format(",.0f")(d) ;
-      }
-
-    )).attr("transform", `translate(${MARGIN.x}, ${MARGIN.y})`)
+    svg.append("g").attr("class", "grid y-grid").call(d3.axisLeft(y).tickFormat((d) => d3.format(",.0f")(d.toPrecision(2)))).attr("transform", `translate(${MARGIN.x}, ${MARGIN.y})`)
   }
 
   let parent = this
@@ -37,7 +31,8 @@ function Chart(countryNames, dates, svg) {
   this.countriesData = undefined
 
   svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "white")
-  y = d3.scaleLog().clamp(true).range([HEIGHT, 0])
+  y = d3.scaleSymlog().range([HEIGHT, 0])
+  y.ticks = ticksSymlog
 
   x = d3.scaleTime().domain([new Date(dates[0]), new Date(dates[dates.length-1])]).range([ 0, WIDTH])
   svg.append("g").attr("class", "grid").attr("transform", `translate(${MARGIN.x}, ${HEIGHT+MARGIN.y})`).call(d3.axisBottom(x).ticks(dates.length).tickFormat(d3.timeFormat("%Y-%m-%d")))
@@ -68,16 +63,11 @@ function Chart(countryNames, dates, svg) {
     if (this.countries.filter((x) => x.name == countryName).length) return undefined
 
     tsData = math.subset(this.countriesData, math.index(countryNames.indexOf(countryName), math.range(0, dates.length))).toArray()[0]
-    diffGroupedTsData = [undefined]
-    for (let i = 0; i < tsData.length-1; i+=1) {
-      let dif = tsData[i+1] - tsData[i]
-      diffGroupedTsData.push(dif > 0 ? dif:0)
-    }
 
     chartArray = []
     for (i = 0; i < tsData.length; i+=1)
       if (!Number.isNaN(tsData[i]) && Number.isFinite(tsData[i]))
-        chartArray.push({time: new Date(dates[i]), valueAll: tsData[i], valueNew: diffGroupedTsData[i]})
+        chartArray.push({time: new Date(dates[i]), valueAll: tsData[i]})
     this.countries.push({name: countryName, data: chartArray, color: this._getColor()})
 
     this.drawLinesChart()
@@ -124,7 +114,7 @@ function Chart(countryNames, dates, svg) {
   }
 
   this._getChartValue = function(d) {
-    return mode == "all" ? d.valueAll:d.valueNew
+    return d.valueAll
   }
 
   this._drawLegendChart = function() {
@@ -180,7 +170,7 @@ function Chart(countryNames, dates, svg) {
     maxVal =  math.max(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
     minVal =  math.min(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
 
-    y.domain([minVal+0.9, maxVal])
+    y.domain([minVal, maxVal])
     svg.select(".y-grid").remove()
     this.drawYAxis()
 
@@ -238,5 +228,49 @@ function Chart(countryNames, dates, svg) {
       .style("font-size", "12px")
 
     downloadPng(downloadSvg, "COVID19-chart.png")
+  }
+
+   function ticksSymlog(count) {
+    logp = (x) => Math.sign(x) * Math.log1p(math.abs(x))
+    powp = (x) => Math.sign(x) * Math.expm1(math.abs(x))
+
+    var d = y.domain(),
+        u = d[0],
+        v = d[d.length - 1],
+        r;
+    base = Math.E
+    if (r = v < u) i = u, u = v, v = i;
+
+    var i = logp(u),
+        j = logp(v),
+        p,
+        k,
+        t,
+        n = count == null ? 10 : +count,
+        z = [];
+
+    if (!(base % 1) && j - i < n) {
+      i = Math.floor(i), j = Math.ceil(j);
+      if (u > 0) for (; i <= j; ++i) {
+        for (k = 1, p = powp(i); k < base; ++k) {
+          t = p * k;
+          if (t < u) continue;
+          if (t > v) break;
+          z.push(t);
+        }
+      } else for (; i <= j; ++i) {
+        for (k = base - 1, p = powp(i); k >= 1; --k) {
+          t = p * k;
+          if (t < u) continue;
+          if (t > v) break;
+          z.push(t);
+        }
+      }
+      if (z.length * 2 < n) z = ticks(u, v, n);
+    } else {
+      z = d3.ticks(i, j, Math.min(j - i, n)).map(powp);
+    }
+
+    return r ? z.reverse() : z;
   }
 }
