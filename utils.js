@@ -41,13 +41,13 @@ function downloadPng(downloadSvg, filename) {
 
 function convertHopkins(indicatorName) {
   removeCountries = new Set([
-    "Congo (Brazzaville)",
     "Diamond Princess",
     "Holy See",
     "MS Zaandam",
     "Saint Kitts and Nevis",
     "Saint Lucia",
     "Saint Vincent and the Grenadines",
+    "Western Sahara",
     "Taiwan*"
   ])
 
@@ -68,7 +68,9 @@ function convertHopkins(indicatorName) {
     "Cote d'Ivoire": "Côte d'Ivoire",
     "Dominican Republic": "Dominican Rep.",
     "Eswatini": "eSwatini",
-    "Equatorial Guinea": "Eq. Guinea"
+    "Equatorial Guinea": "Eq. Guinea",
+    "South Sudan": "S. Sudan",
+    "Congo (Brazzaville)": "Congo"
   }
 
   data[indicatorName].map(function(d) {
