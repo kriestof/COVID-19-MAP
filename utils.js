@@ -124,7 +124,7 @@ function fetchWbankIndicators(formula) {
   if (!wbankIndicators.length) return Promise.resolve()
   countryNamesSet = new Set(countryNames)
 
-  return d3.json(`http://api.worldbank.org/v2/country/all/indicator/${wbankIndicators.join(";")}?format=json&date=2018&source=2&Per_page=10000`)
+  return d3.json(`http://api.worldbank.org/v2/country/all/indicator/${wbankIndicators.join(";")}?format=json&mrnev=1&gapfill=Y&source=2&Per_page=10000`)
     .then(function(wbankData) {
       const namesMap = {
         "Bahamas, The": "Bahamas",
@@ -165,6 +165,9 @@ function fetchWbankIndicators(formula) {
 
       for (let indicatorName of wbankIndicators) {
         wbankIndicator = wbankData[indicatorName]
+        wbankIndicatorCountryNamesSet = new Set(wbankIndicator.map((x) => x.country.value))
+        naCountryNames = countryNames.filter((x) => !wbankIndicatorCountryNamesSet.has(x))
+        naCountryNames.map((countryName) => wbankIndicator.push({country: {value: countryName}, value: NaN}))
         wbankIndicator.sort((x, y) => x.country.value > y.country.value)
         wbankIndicator = wbankIndicator.map((x) => x.value)
 
