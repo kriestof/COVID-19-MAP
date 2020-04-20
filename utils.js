@@ -78,7 +78,7 @@ function convertHopkins(indicatorName) {
       d["Country/Region"] = namesMap[d["Country/Region"]]
   })
 
-  data[indicatorName].sort((objX, objY) => objX["Country/Region"] > objY["Country/Region"])
+  data[indicatorName].sort((objX, objY) => objX["Country/Region"] > objY["Country/Region"]? 1:-1)
 
   data[indicatorName] = d3.nest()
     .key((d) => d["Country/Region"])
@@ -168,7 +168,7 @@ function fetchWbankIndicators(formula) {
         wbankIndicatorCountryNamesSet = new Set(wbankIndicator.map((x) => x.country.value))
         naCountryNames = countryNames.filter((x) => !wbankIndicatorCountryNamesSet.has(x))
         naCountryNames.map((countryName) => wbankIndicator.push({country: {value: countryName}, value: NaN}))
-        wbankIndicator.sort((x, y) => x.country.value > y.country.value)
+        wbankIndicator.sort((x, y) => x.country.value > y.country.value ? 1:-1)
         wbankIndicator = wbankIndicator.map((x) => x.value)
 
         data["WB_"+indicatorName.replace(/\./g, "_")] = math.matrix(wbankIndicator.map(

@@ -54,7 +54,7 @@ function worldMap(countryNames, dates, svg) {
 
     d3.select("#map-outer a").on("click", downloadMapPng)
 
-    return d3.json("https://unpkg.com/world-atlas@2.0.2/countries-50m.json").then((data) => world = data)
+    return d3.json("countries-50m.json").then((data) => world = data)
     .then(drawWorld)
   }
 

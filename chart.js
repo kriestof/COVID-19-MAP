@@ -31,6 +31,17 @@ function Chart(countryNames, dates, svg) {
     svg.selectAll(".y-gridlines line").attr("stroke", "#cecece")
   }
 
+  this.changeScale = function(scale) {
+    if (scale === "symlog") {
+      y = d3.scaleSymlog().range([HEIGHT, 0])
+      y.ticks = ticksSymlog
+    }
+
+    if (scale === "linear")
+      y = d3.scaleLinear().range([HEIGHT, 0])
+    y
+  }
+
   let parent = this
   this.allCountryNames = countryNames
   this.countries = []
@@ -38,10 +49,11 @@ function Chart(countryNames, dates, svg) {
   this.countriesData = undefined
 
   svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "white")
-  y = d3.scaleSymlog().range([HEIGHT, 0])
-  y.ticks = ticksSymlog
+  let y = undefined
+  this.yDomain = [undefined, undefined]
+  this.changeScale(scale)
 
-  x = d3.scaleTime().domain([new Date(dates[0]), new Date(dates[dates.length-1])]).range([ 0, WIDTH])
+  this.x = d3.scaleTime().domain([new Date(dates[0]), new Date(dates[dates.length-1])]).range([ 0, WIDTH])
 
   d3.select("#download-chart").on("click", () => this.downloadChartPng())
 
@@ -86,21 +98,26 @@ function Chart(countryNames, dates, svg) {
     let country = chartSvg.selectAll("g.country")
         .data(this.countries).enter().append("g").attr("class", "country")
 
+    filterPoint = (point) => this._getChartValue(point) !== undefined &&
+        (point.time >= this.x.domain()[0] & point.time <= this.x.domain()[1]) &&
+        this._getChartValue(point) >= y.domain()[0]
+
+
     country.append("path")
        .attr("fill", "none")
        .attr("stroke", (d) => d.color)
        .attr("stroke-width", 1.5)
        .attr("d", (d) => d3.line()
-         .x((d) => x(d.time)+MARGIN.x)
-         .y((d) => y(this._getChartValue(d))+MARGIN.y)(d.data.filter((x) => this._getChartValue(x) !== undefined))
+         .x((d) => this.x(d.time)+MARGIN.x)
+         .y((d) => y(this._getChartValue(d))+MARGIN.y)(d.data.filter(filterPoint))
        )
 
     country
       .selectAll("circle")
-      .data((d) => d.data.filter((x) => this._getChartValue(x) !== undefined))
+      .data((d) => d.data.filter(filterPoint))
       .enter().append("circle")
       .attr("fill", function(d) { return d3.select(this.parentNode).datum().color})
-      .attr("cx", (d) => x(d.time)+MARGIN.x)
+      .attr("cx", (d) => this.x(d.time)+MARGIN.x)
       .attr("cy", (d) => y(this._getChartValue(d))+MARGIN.y)
       .attr("r", 5)
       .attr("stroke-width", "2px")
@@ -172,15 +189,15 @@ function Chart(countryNames, dates, svg) {
 
   this.changeData = function(data) {
     this.countriesData = data
-    maxVal =  math.max(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
-    minVal =  math.min(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
+    maxVal = this.yDomain[1] !== undefined ? this.yDomain[1]:math.max(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
+    minVal = this.yDomain[0] !== undefined ? this.yDomain[0]:math.min(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
 
     y.domain([minVal, maxVal])
     svg.selectAll(".y-grid").remove()
     this.drawYAxis()
 
-    svg.select(".x-grid").remove()
-    svg.append("g").attr("class", "grid x-grid").attr("transform", `translate(${MARGIN.x}, ${HEIGHT+MARGIN.y})`).call(d3.axisBottom(x).ticks(dates.length).tickFormat(d3.timeFormat("%Y-%m-%d")))
+    svg.selectAll(".x-grid").remove()
+    svg.append("g").attr("class", "grid x-grid").attr("transform", `translate(${MARGIN.x}, ${HEIGHT+MARGIN.y})`).call(d3.axisBottom(this.x).ticks((this.x.domain()[1]-this.x.domain()[0]) / (1000 * 60 * 60 * 24)).tickFormat(d3.timeFormat("%Y-%m-%d")))
       .selectAll("text").attr("transform", "rotate(-65)").attr("dx", "-.8em").attr("dy", ".15em").style("text-anchor", "end")
 
     this._drawLegendChart()

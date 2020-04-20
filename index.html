@@ -93,6 +93,20 @@
       <a href="">Download png</a>
     </div>
   </div>
+
+  <div>
+    <strong>xlim:</strong><input id="xlim-min" type="date">:<input id="xlim-max" type="date">
+    <strong>ylim:</strong><input id="ylim-min" type="number">:<input id="ylim-max" type="number">
+
+    <button type="button" name="button" id="set-scale-lim">Set</button>
+
+    <strong>scale type:</strong>
+    <select id="choose-scale">
+      <option value="symlog">symlog</option>
+      <option value="linear">linear</option>
+    </select>
+  </div>
+
   <div id="chart">
     <div id="chart-menu">
       <input type="text" id="search-country" placeholder="Type country name">
@@ -128,6 +142,16 @@ let data = {}
 let dates = undefined
 let countryNames = undefined
 let savedFormula = undefined
+let scale = d3.select("#choose-scale").node().value
+
+d3.select("#choose-scale").on("change", function() {changeScale(this.value)})
+
+d3.select("#set-scale-lim").on("click", function() {
+  changeScaleLims(
+    [new Date(d3.select("#xlim-min").node().value) - 1000*60*60*24, new Date(d3.select("#xlim-max").node().value)],
+    [d3.select("#ylim-min").node().value, d3.select("#ylim-max").node().value]
+  )
+})
 
 d3.select("#mode").on("change", function() {
   mode = this.value
@@ -143,6 +167,17 @@ d3.select("#predefined-formulas").on("change", function() {
   d3.select("#formula").node().value = this.value
   changeData(this.value)
 })
+
+function changeScaleLims(xlim, ylim) {
+  chart.yDomain = ylim
+  chart.x.domain(xlim)
+  changeData()
+}
+
+function changeScale(scale) {
+  chart.changeScale(scale)
+  changeData()
+}
 
 function changeData(formula) {
   if (!formula)
