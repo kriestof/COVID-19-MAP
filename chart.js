@@ -17,7 +17,7 @@
 
 function Chart(countryNames, dates, svg) {
   const MARGIN = {x: 60, y: 10}
-  const WIDTH = 800
+  const WIDTH = 830
   const HEIGHT = 600
 
   this.drawYAxis = function() {
@@ -42,6 +42,10 @@ function Chart(countryNames, dates, svg) {
     y
   }
 
+  this.setYDomain = function(ymin, ymax) {
+    y.domain([ymin, ymax])
+  }
+
   let parent = this
   this.allCountryNames = countryNames
   this.countries = []
@@ -50,10 +54,9 @@ function Chart(countryNames, dates, svg) {
 
   svg.append("rect").attr("width", "100%").attr("height", "100%").attr("fill", "white")
   let y = undefined
-  this.yDomain = [undefined, undefined]
   this.changeScale(scale)
 
-  this.x = d3.scaleTime().domain([new Date(dates[0]), new Date(dates[dates.length-1])]).range([ 0, WIDTH])
+  this.x = d3.scaleTime().range([ 0, WIDTH])
 
   d3.select("#download-chart").on("click", () => this.downloadChartPng())
 
@@ -189,10 +192,6 @@ function Chart(countryNames, dates, svg) {
 
   this.changeData = function(data) {
     this.countriesData = data
-    maxVal = this.yDomain[1] !== undefined ? this.yDomain[1]:math.max(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
-    minVal = this.yDomain[0] !== undefined ? this.yDomain[0]:math.min(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
-
-    y.domain([minVal, maxVal])
     svg.selectAll(".y-grid").remove()
     this.drawYAxis()
 

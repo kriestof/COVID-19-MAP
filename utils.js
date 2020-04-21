@@ -177,3 +177,8 @@ function fetchWbankIndicators(formula) {
       }
     })
 }
+
+function UTCDate(strDate) {
+  let strDateSplit = strDate.split("/")
+  return new Date(`20${strDateSplit[2]}-${strDateSplit[0].padStart(2, "0")}-${strDateSplit[1]}T00:00:00Z`)
+}

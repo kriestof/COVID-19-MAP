@@ -42,6 +42,11 @@ function worldMap(countryNames, dates, svg) {
 
   let countriesData = undefined
   let tooltip = undefined
+  let scaleDomain = undefined
+
+  function setScaleDomain(scaleMin, scaleMax) {
+    scaleDomain = [scaleMin, scaleMax]
+  }
 
   function initMap() {
     tooltip = d3.select("#map").append("div")
@@ -98,8 +103,8 @@ function worldMap(countryNames, dates, svg) {
       .attr("max", dates.length-1)
     dateEl.node().value = dates.length-1
 
-    maxVal =  math.max(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
-    minVal =  math.min(data.toArray().map((arr) => arr.filter((x) => !Number.isNaN(x) && Number.isFinite(x))))
+    maxVal = scaleDomain[1]
+    minVal = scaleDomain[0]
 
     absMax = Math.max(Math.abs(minVal), Math.abs(maxVal))
     scale.domain([-absMax, absMax])
@@ -209,10 +214,12 @@ function worldMap(countryNames, dates, svg) {
   }
 
   return {
+    setScaleDomain: setScaleDomain,
     changeData: changeData,
     displayMapForDate: displayMapForDate,
     displayRegion: displayRegion,
     initMap: initMap,
-    downloadMapPng: downloadMapPng
+    downloadMapPng: downloadMapPng,
+    changeScale: changeScale
   }
 }
