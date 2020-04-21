@@ -17,7 +17,7 @@
 
 function Chart(countryNames, dates, svg) {
   const MARGIN = {x: 60, y: 10}
-  const WIDTH = 830
+  const WIDTH = 820
   const HEIGHT = 600
 
   this.drawYAxis = function() {

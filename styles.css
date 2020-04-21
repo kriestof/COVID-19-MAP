@@ -37,7 +37,7 @@ div.tooltip {
 #chart svg{width: 100%; height:710px; margin:0px auto;}
 #chart #chart-menu {height:55px; padding-top: 15px; padding-left: 8px; box-sizing: border-box;}
 #chart #chart-menu input {height: 30px;}
-#chart #chart-menu .right-menu { float:right; }
+#chart #chart-menu .right-menu { float:right; margin-right: 10px;}
 #chart #chart-menu .left-menu { display: inline-block;}
 
 #chart #search-country {width: 300px; box-sizing: border-box;}
