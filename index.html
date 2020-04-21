@@ -43,7 +43,7 @@
   <div>
     <div id="formula-menu">
       <div class="left-menu">
-        <strong>Choose indicator:</strong>
+        <strong>Indicator:</strong>
         <select id="predefined-formulas">
           <option value="infected">infected</option>
           <option value="recovered">recovered</option>
@@ -51,7 +51,10 @@
           <option value="infected - recovered - deaths">currently infected</option>
           <option value="recovered ./ infected * 10^2">recovered rate</option>
           <option value="deaths ./ infected * 10^2">death rate</option>
-          <option value="round(infected ./ WB_SP_POP_TOTL * 10^6)">infected per 1 mln.</option>
+          <option value="round(infected ./ WB_SP_POP_TOTL * 10^6)">infected per POP per 1 mln.</option>
+          <option value="round(deaths ./ WB_SP_POP_TOTL * 10^6)">deaths per POP per 1 mln.</option>
+          <option value="round(infected ./ WB_EN_POP_DNST)">infected per POP DNST.</option>
+          <option value="round(deaths ./ WB_EN_POP_DNST)">deaths per POP DNST.</option>
         </select>
       </div>
 

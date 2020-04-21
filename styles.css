@@ -60,7 +60,7 @@ div.tooltip {
 #formula-menu .right-menu .help-text {display: inline-block; margin-top: 19px; margin-right: 5px; text-align: center;}
 #formula-menu .right-menu .help-text a {font-size: 12px}
 
-#scale-lim-menu { padding-top: 15px; padding-left: 18px;}
+#scale-lim-menu { padding-top: 15px; padding-left: 18px; height: 90px; box-sizing: border-box; }
 #scale-lim-menu input[type="number"] { width: 100px; }
 #scale-lim-menu button { margin-left: 15px; }
 #scale-lim-menu #ylim-menu { margin-left: 10px; display: inline-block;}
