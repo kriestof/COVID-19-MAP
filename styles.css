@@ -60,9 +60,11 @@ div.tooltip {
 #formula-menu .right-menu .help-text {display: inline-block; margin-top: 19px; margin-right: 5px; text-align: center;}
 #formula-menu .right-menu .help-text a {font-size: 12px}
 
-#scale-lim-menu { padding-top: 15px; padding-left: 18px; height: 90px; box-sizing: border-box; }
-#scale-lim-menu input[type="number"] { width: 100px; }
-#scale-lim-menu button { margin-left: 15px; }
+#scale-lim-menu { padding-top: 15px; padding-left: 18px; height: 90px; box-sizing: border-box; line-height: 30px }
+#scale-lim-menu input[type="number"] { width: 80px; }
+#scale-lim-menu button { border: none; background-color: #a2192b; color: white; padding: 5px 30px; cursor: pointer; font-weight: bold; float: right; margin-right: 10px}
+#scale-lim-menu button:active {box-shadow: inset 0px 0px 10px #67101b;}
+#scale-lim-menu button::-moz-focus-inner {border: none;}
 #scale-lim-menu #ylim-menu { margin-left: 10px; display: inline-block;}
 
 #footer {
