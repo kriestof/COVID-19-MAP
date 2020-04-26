@@ -1,0 +1,76 @@
+/* Copyright 2020 Krzysztof Piwoński <piwonski.kris@gmail.com> */
+/*  This file is a part of COVID-19 chart.
+
+    COVID-19 chart is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    COVID-19 chart is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>. */
+body {margin: 0; margin-bottom:  50px; font-family: sans-serif; position: relative}
+
+header h1 {margin: 30px 18px 50px 18px;}
+span.label { padding-right: 5px; font-weight: bold;}
+
+.inner { display: flex; flex-direction: row; flex-wrap: wrap; }
+.map .right-menu {float:right; padding: 13px 0;}
+.map {width: 900px; position: relative;}
+.map .date {vertical-align: middle; width: 170px; margin-right: 7px;}
+.map svg{width: 100%; height:500px; margin:0px auto; background: black;}
+.map .map-menu {height: 60px; padding: 18px 19px; box-sizing: border-box; display: inline-block;}
+.map .region {margin-right: 7px;}
+
+.map-outer {position:relative;}
+.map-outer a { position:absolute; left: 20px; bottom: 10px; color:white; text-decoration: none; border: 1px solid white; padding: 5px; text-transform: uppercase; font-size: 14px; background-color: #4d4d4d; cursor: pointer;}
+
+.chart {margin-left: 10px; width: 890px;}
+.chart svg{width: 100%; height:710px; margin:0px auto;}
+.chart .download-chart {display: inline-block; cursor: pointer; text-transform: uppercase; border: 1px solid black; padding: 0 5px; margin-left: 20px; box-sizing: border-box; line-height: 28px;}
+.chart .chart-menu {height:55px; padding-top: 15px; padding-left: 8px; box-sizing: border-box;}
+.chart .chart-menu .right-menu { float:right; margin-right: 10px;}
+.chart .chart-menu .left-menu { display: inline-block;}
+.chart .search-country {width: 300px; box-sizing: border-box; height: 30px;}
+.chart .search-country-wrapper {display: inline-block;}
+.chart .show-points {font-weight: bold; margin-right: 10px; cursor: pointer;}
+.chart .show-points input { margin-left: 8px;}
+
+.chart .result {position: absolute; background-color: white; border: #CECECE solid 1px; width: 300px;}
+.chart .result ul {list-style: none; padding: 0; margin: 0;}
+.chart .result ul li {padding: 8px; cursor: pointer;}
+.chart .result ul li:hover {background-color: #CECECE;}
+
+.formula-menu {padding-left: 18px; width: 900px; height: 80px; margin-bottom: 10px; position: relative;}
+.formula-menu .formula-wrapper {width:430px;}
+.formula-menu .formula {width: 100%; box-sizing: border-box; padding: 15px; border-radius: 0px; border: 2px solid #cecece;}
+.formula-menu .formula:focus {border-color: #ababab;}
+.formula-menu .formula.error, .formula-menu .formula.error:focus {border-color: #cc0000}
+.formula-menu .formula-error {color: #c00; text-align: center; padding-top: 10px;   text-overflow: ellipsis; overflow: hidden; height: 1.2em; white-space: nowrap;}
+.formula-menu .left-menu {padding: 13px 0; display: inline-block;}
+.formula-menu .right-menu {float: right; margin-right: 15px; display: flex;}
+.formula-menu .right-menu .help-text {display: inline-block; margin-top: 19px; margin-right: 5px; text-align: center;}
+.formula-menu .right-menu .help-text a {font-size: 12px}
+
+.scale-lim-menu { padding-top: 15px; padding-left: 18px; height: 90px; box-sizing: border-box; line-height: 30px }
+.scale-lim-menu input[type="number"] { width: 80px; }
+.scale-lim-menu .xlim-menu { display: inline-block;}
+.scale-lim-menu .ylim-menu { margin-left: 20px; display: inline-block;}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 10px 0;
+  height: 25px;
+  border-top: 1px solid #cecece;
+  box-shadow: 0 -1px 5px 0 #cecece;
+  background-color: white;
+  font-size: 0.9em;
+}
+footer .left { margin-left: 10px;}
+footer .right {float:right; margin-right: 10px;}

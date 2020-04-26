@@ -6,14 +6,13 @@ import {feature as topojson_feature} from "/web_modules/topojson-client.js"
 import countryPathComponent from "./path.js"
 import legendComponent from "./legend.js"
 import downloadMapPng from "./download-png.js"
-import config from "/src/config/world.js"
+import * as config from "/src/config/world/main.js"
 
 export default function mapComponent() {
   let selectedDate = -1
   let indicatorList = undefined
 
-  let projection = config.projection
-  let path = d3.geoPath().projection(projection)
+  let path = d3.geoPath().projection(config.PROJECTION)
   let scale = d3.scaleSymlog().range([1, 0])
 
   let regionValue = undefined
@@ -22,7 +21,7 @@ export default function mapComponent() {
 
   return {
     oninit: function(vnode) {
-      m.request({url: "countries-50m.json"}).then((data) => world = topojson_feature(data,data.objects.countries).features)
+      m.request({url: config.MAP_URL}).then((data) => world = topojson_feature(data,data.objects.countries).features)
       indicatorList = vnode.attrs.indicatorList
     },
     view: function(vnode) {
@@ -48,10 +47,10 @@ export default function mapComponent() {
         m(".right-menu", [
           m("span.label", "Region:"),
           m("select.region", {oninput: function() {
-            let reg = config.regions.find((x) => this.value === x.value)
+            let reg = config.REGIONS.find((x) => this.value === x.value)
             projection.scale(reg.scale).translate(reg.translate)
             regionValue = reg.value
-          }}, config.regions.map((reg) => m("option" , {value: reg.value}, reg.name))),
+          }}, config.REGIONS.map((reg) => m("option" , {value: reg.value}, reg.name))),
           m("span.label", "Mode:"),
           m("select", {oninput: function() {indicatorList.mode = this.value; indicatorList.changeData()}}, [
             m("option", {value: "all", default: true}, "Indicator"),

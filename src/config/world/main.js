@@ -1,8 +1,11 @@
 import {geoRobinson as d3_geoRobinson} from "/web_modules/d3-geo-projection.js"
 
-let projection = d3_geoRobinson()
+import hopkinsFetch from "./hopkins-fetch.js"
+import fetchWbankIndicators from "./worldbank-fetch.js"
+export const MAP_URL = "assets/countries-50m.json"
+export const PROJECTION = d3_geoRobinson()
 
-let predefinedIndicators = [
+export const PREDEFINED_INDICATORS = [
   {name: "infected", formula: "infected"},
   {name: "recovered", formula: "recovered"},
   {name: "deaths", formula: "deaths"},
@@ -15,8 +18,8 @@ let predefinedIndicators = [
   {name: "deaths per POP DNST.", formula: "round(deaths ./ WB_EN_POP_DNST)"},
 ]
 
-let regions = [
-  {value: "world", name: "World", scale: projection.scale(), translate: projection.translate()},
+export const REGIONS = [
+  {value: "world", name: "World", scale: PROJECTION.scale(), translate: PROJECTION.translate()},
   {value: "europe", name: "Europe", scale: 700, translate: [300, 930]},
   {value: "asia", name: "Asia", scale: 400, translate: [-100, 500]},
   {value: "africa", name: "Africa", scale: 350, translate: [300, 260]},
@@ -25,10 +28,10 @@ let regions = [
   {value: "australia", name: "Australia", scale: 450, translate: [-600, 50]},
 ]
 
-let config = {
-  regions: regions,
-  predefinedIndicators: predefinedIndicators,
-  projection: projection
+export function changeDataFetch(formula, data, dates, countryNames) {
+  return fetchWbankIndicators(formula, data, dates, countryNames)
 }
 
-export default config
+export function initFetch(formula) {
+  return hopkinsFetch()
+}

@@ -1,8 +1,9 @@
 import m from "/web_modules/mithril.js"
-import config from "../../config/world.js"
+
+import * as config from "/src/config/world/main.js"
 
 export default function formulaMenuComponent() {
-  let formulaValue = config.predefinedIndicators[0].name
+  let formulaValue = config.PREDEFINED_INDICATORS[0].name
   let error = undefined
   let isFetching = undefined
 
@@ -20,8 +21,8 @@ export default function formulaMenuComponent() {
       return m("section.formula-menu", [
         m(".left-menu", [
           m("span.label", "Indicator:"),
-          m("select#predefined-formulas", {onchange: function() {formulaValue = this.value; changeData(this.value)}},
-            config.predefinedIndicators.map((ind) => m("option", {value: ind.formula}, ind.name)))
+          m("select", {onchange: function() {formulaValue = this.value; changeData(this.value)}},
+            config.PREDEFINED_INDICATORS.map((ind) => m("option", {value: ind.formula}, ind.name)))
         ]),
         m(".right-menu", [
           m("span.help-text", [
