@@ -1,3 +1,6 @@
+import m from "/web_modules/mithril.js"
+import * as d3 from "/web_modules/d3.js"
+
 import ticksSymlogWrapper from "./ticks-symlog.js"
 import yAxis from "./y-axis.js"
 import xAxis from "./x-axis.js"
@@ -37,22 +40,22 @@ export default function chartComponent() {
       if (scaleLimService.valueLim)
         y.domain(scaleLimService.valueLim)
 
-      return m("#chart", [
-        m("#chart-menu", [
+      return m("section.chart#chart", [
+        m(".chart-menu", [
           m(".left-menu", [
             m(searchCountry, {
               countryNames: vnode.attrs.indicatorList.countryNames,
               chartService: vnode.attrs.chartService
             }),
-            m("a#download-chart", {onclick: () => downloadChartPng(MARGIN)}, "Download png")
+            m("a.download-chart", {onclick: () => downloadChartPng(MARGIN)}, "Download png")
           ]),
           m(".right-menu", [
-            m("label#show-points", [
+            m("label.show-points", [
               "Show points",
               m("input", {type: "checkbox", checked: showPoints ? true:false, onchange: () => showPoints = !showPoints })
             ]),
             m("span.label", "Scale type:"),
-            m("select#choose-scale", {oninput: function() {changeYScale(this.value)}}, [
+            m("select", {oninput: function() {changeYScale(this.value)}}, [
               m("option", {value: "symlog"}, "symlog"),
               m("option", {value: "linear"}, "linear")
             ])

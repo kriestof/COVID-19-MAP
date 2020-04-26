@@ -1,3 +1,6 @@
+import m from "/web_modules/mithril.js"
+import * as d3 from "/web_modules/d3.js"
+
 export default function countryLines() {
   let mouseover = {}
 

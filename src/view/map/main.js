@@ -1,7 +1,12 @@
+import m from "/web_modules/mithril.js"
+import * as d3 from "/web_modules/d3.js"
+import * as math from "/web_modules/mathjs.js"
+import {feature as topojson_feature} from "/web_modules/topojson-client.js"
+
 import countryPathComponent from "./path.js"
 import legendComponent from "./legend.js"
 import downloadMapPng from "./download-png.js"
-import config from "../../config/world.js"
+import config from "/src/config/world.js"
 
 export default function mapComponent() {
   let selectedDate = -1
@@ -17,7 +22,7 @@ export default function mapComponent() {
 
   return {
     oninit: function(vnode) {
-      m.request({url: "countries-50m.json"}).then((data) => world = topojson.feature(data,data.objects.countries).features)
+      m.request({url: "countries-50m.json"}).then((data) => world = topojson_feature(data,data.objects.countries).features)
       indicatorList = vnode.attrs.indicatorList
     },
     view: function(vnode) {
@@ -33,27 +38,27 @@ export default function mapComponent() {
       }
 
 
-      return m("#map",[
-        m("#map-menu", [
+      return m("section.map#map",[
+        m(".map-menu", [
           m("span.label", "Choose date:"),
-          m("input#date", {type: "range", min: 0, max: dates.length ? dates.length-1:0, value: selectedDate, oninput: function() { selectedDate = this.value}}),
+          m("input.date", {type: "range", min: 0, max: dates.length ? dates.length-1:0, value: selectedDate, oninput: function() { selectedDate = this.value}}),
           m("span.label", "Date:"),
           m("span#selected-date", dates[selectedDate] ? dates[selectedDate].toISOString().slice(0, 10):"")
         ]),
         m(".right-menu", [
           m("span.label", "Region:"),
-          m("select#region", {oninput: function() {
+          m("select.region", {oninput: function() {
             let reg = config.regions.find((x) => this.value === x.value)
             projection.scale(reg.scale).translate(reg.translate)
             regionValue = reg.value
           }}, config.regions.map((reg) => m("option" , {value: reg.value}, reg.name))),
           m("span.label", "Mode:"),
-          m("select#mode", {oninput: function() {indicatorList.mode = this.value; indicatorList.changeData()}}, [
+          m("select", {oninput: function() {indicatorList.mode = this.value; indicatorList.changeData()}}, [
             m("option", {value: "all", default: true}, "Indicator"),
             m("option", {value: "increase", default: true}, "Daily increase")
           ]),
         ]),
-        m("#map-outer", [
+        m(".map-outer", [
           m("a", {onclick: () => downloadMapPng(indicatorList)}, "Download png"),
           m("svg", [
             m("rect", {width: "100%", height: "100%", fill: "#4d4d4d"}),

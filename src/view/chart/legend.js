@@ -1,10 +1,10 @@
+import m from "/web_modules/mithril.js"
+
 export default function legend() {
   return {
     view: function(vnode) {
       let chartService = vnode.attrs.chartService
       const MARGIN = vnode.attrs.MARGIN
-
-      // console.log(chartService.countries)
 
       return m("g", {transform: `translate(${MARGIN.x},0)`}, chartService.countries.map(function(country, id) {
         return m("g", [

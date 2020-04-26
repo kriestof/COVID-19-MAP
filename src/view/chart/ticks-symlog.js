@@ -1,7 +1,10 @@
+import m from "/web_modules/mithril.js"
+import * as d3 from "/web_modules/d3.js"
+
 export default function ticksSymlogWrapper(y) {
   return function ticksSymlog(count) {
-   let logp = (x) => Math.sign(x) * Math.log1p(math.abs(x))
-   let powp = (x) => Math.sign(x) * Math.expm1(math.abs(x))
+   let logp = (x) => Math.sign(x) * Math.log1p(Math.abs(x))
+   let powp = (x) => Math.sign(x) * Math.expm1(Math.abs(x))
 
    let d = y.domain(),
        u = d[0],

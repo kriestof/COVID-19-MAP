@@ -1,7 +1,9 @@
+import * as d3 from "/web_modules/d3.js"
+
 import {downloadPng} from "../../utils.js"
 
 export default function downloadMapPng(indicatorList) {
-  let mapSvg = d3.select("#map #map-outer svg")
+  let mapSvg = d3.select("#map svg")
   let downloadSvg = d3.select(mapSvg.node().cloneNode(true))
   downloadSvg.attr("width", mapSvg.node().width.baseVal.value)
   downloadSvg.attr("height",mapSvg.node().height.baseVal.value)

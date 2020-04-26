@@ -1,3 +1,7 @@
+import m from "/web_modules/mithril.js"
+import * as math from "/web_modules/mathjs.js"
+import * as d3 from "/web_modules/d3.js"
+
 import {UTCDate} from "../utils.js"
 
 export default function IndicatorList(scaleLimService) {

@@ -1,3 +1,4 @@
+import m from "/web_modules/mithril.js"
 import config from "../../config/world.js"
 
 export default function formulaMenuComponent() {
@@ -16,7 +17,7 @@ export default function formulaMenuComponent() {
       }
 
       let indicatorList = vnode.attrs.indicatorList
-      return m("#formula-menu", [
+      return m("section.formula-menu", [
         m(".left-menu", [
           m("span.label", "Indicator:"),
           m("select#predefined-formulas", {onchange: function() {formulaValue = this.value; changeData(this.value)}},
@@ -28,15 +29,15 @@ export default function formulaMenuComponent() {
             m("br"),
             m("a", {href: "/help.html"}, "help?")
           ]),
-          m("#formula-wrapper", [
-            m("input#formula", {
+          m(".formula-wrapper", [
+            m("input.formula#formula", {
               type: "text",
               value: formulaValue,
               disabled: isFetching,
               onchange: function() {formulaValue = this.value; changeData(this.value)},
               class: error ? "error":""
             }),
-            m("#formula-error", {title: error}, error)
+            m(".formula-error", {title: error}, error)
           ])
         ])
       ])

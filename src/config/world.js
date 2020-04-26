@@ -1,4 +1,6 @@
-let projection = d3.geoRobinson()
+import {geoRobinson as d3_geoRobinson} from "/web_modules/d3-geo-projection.js"
+
+let projection = d3_geoRobinson()
 
 let predefinedIndicators = [
   {name: "infected", formula: "infected"},

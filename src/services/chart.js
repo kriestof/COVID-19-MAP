@@ -1,3 +1,5 @@
+import * as d3 from "/web_modules/d3.js"
+
 export default function ChartService(indicatorList) {
   this.countries = []
   this.countryColors = new Set()

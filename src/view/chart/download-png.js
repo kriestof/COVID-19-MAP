@@ -1,3 +1,5 @@
+import * as d3 from "/web_modules/d3.js"
+
 import {downloadPng} from "../../utils.js"
 
 export default function downloadChartPng(MARGIN) {

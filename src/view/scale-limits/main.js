@@ -1,3 +1,5 @@
+import m from "/web_modules/mithril.js"
+
 export default function scaleLimComponent() {
   let dateLim = [undefined, undefined]
   let valueLim = [undefined, undefined]
@@ -7,10 +9,10 @@ export default function scaleLimComponent() {
       let scaleLimService = vnode.attrs.scaleLimService
       let indicatorList = vnode.attrs.indicatorList
 
-      return m("#scale-lim-menu", [
-        m("#xlim-menu", [
+      return m("section.scale-lim-menu", [
+        m(".xlim-menu", [
           m("span.label", "Date range:"),
-          m("input#xlim-min", {type: "date",
+          m("input", {type: "date",
             required: true,
             valueAsDate: scaleLimService.dateLim ? scaleLimService.dateLim[0]:null,
             onchange: function() {
@@ -18,7 +20,7 @@ export default function scaleLimComponent() {
             }
           }),
           m("span", ":"),
-          m("input#xlim-max", {type: "date",
+          m("input", {type: "date",
             required: true,
             valueAsDate: scaleLimService.dateLim ? scaleLimService.dateLim[1]:null,
             onchange: function() {
@@ -26,9 +28,9 @@ export default function scaleLimComponent() {
             }
           })
         ]),
-        m("#ylim-menu", [
+        m(".ylim-menu", [
           m("span.label", "Value range:"),
-          m("input#ylim-min", {type:"number",
+          m("input", {type:"number",
             value: scaleLimService.valueLim ? scaleLimService.valueLim[0]:null,
             onchange: function() {
               if (this.value < scaleLimService.valueLim[1])
@@ -36,7 +38,7 @@ export default function scaleLimComponent() {
             }
           }),
           m("span", ":"),
-          m("input#ylim-max", {type:"number",
+          m("input", {type:"number",
             value: scaleLimService.valueLim ? scaleLimService.valueLim[1]:null,
             onchange: function() {
               if (this.value > scaleLimService.valueLim[0])
