@@ -28,7 +28,7 @@ export default function formulaMenuComponent() {
           m("span.help-text", [
             m("span.label", "or type:"),
             m("br"),
-            m("a", {href: "/help.html"}, "help?")
+            m(m.route.Link, {href: "/help"}, "help?")
           ]),
           m(".formula-wrapper", [
             m("input.formula#formula", {

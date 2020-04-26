@@ -2,6 +2,8 @@ import {geoRobinson as d3_geoRobinson} from "/web_modules/d3-geo-projection.js"
 
 import hopkinsFetch from "./hopkins-fetch.js"
 import fetchWbankIndicators from "./worldbank-fetch.js"
+import HELP_TEXT from "./help.js"
+
 export const MAP_URL = "assets/countries-50m.json"
 export const PROJECTION = d3_geoRobinson()
 
@@ -35,3 +37,5 @@ export function changeDataFetch(formula, data, dates, countryNames) {
 export function initFetch(formula) {
   return hopkinsFetch()
 }
+
+export {HELP_TEXT}

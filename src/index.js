@@ -9,7 +9,7 @@ import mapComponent from "./view/map/main.js"
 import chartComponent from "./view/chart/main.js"
 import scaleLimComponent from "./view/scale-limits/main.js"
 import footerComponent from "./view/footer.js"
-
+import {HELP_TEXT} from "/src/config/world/main.js"
 
 let scaleLimService = new ScaleLimService()
 let indicatorList = new IndicatorList(scaleLimService)
@@ -17,9 +17,9 @@ let chartService = new ChartService(indicatorList)
 
 let rootComponent = {
   view: function(vnode) {
-    return m("main", [
+    return m("", [
       m("header", m("h1", "History of COVID19 by country")),
-      m(".inner", [
+      m("main.inner", [
       m("div", [
         m(formulaMenuComponent, {indicatorList: indicatorList}),
         m(mapComponent, {indicatorList: indicatorList, chartService: chartService, scaleLimService: scaleLimService}),
@@ -34,4 +34,11 @@ let rootComponent = {
   }
 }
 
-m.mount(document.body, rootComponent)
+m.route(document.body, "/", {
+  "/": rootComponent,
+  "/help": {view: () => m("", [
+    m("header", m("h1", "History of COVID19 by country - help")),
+    m("main.help", m.trust(HELP_TEXT)),
+    m(footerComponent)
+  ])}
+})
