@@ -18,7 +18,7 @@ export default function xAxis() {
         .selectAll("text").attr("transform", "rotate(-65)").attr("dx", "-.8em").attr("dy", ".15em").style("text-anchor", "end")
     },
     view: function(vnode) {
-      return m("g.x-axis")
+      return m("g")
     }
   }
 }

@@ -63,8 +63,8 @@ export default function chartComponent() {
         ]),
         m("svg", [
           m("rect", {width: "100%", height: "100%", fill: "white"}),
-          scaleLimService.valueLim ? m("g", m(yAxis, {key: `${scaleLimService.valueLim[0]}-${scaleLimService.valueLim[1]}-${yScaleType}`, y: y, MARGIN: MARGIN, SVG_SIZE: SVG_SIZE})):"",
-          scaleLimService.dateLim ? m("g", m(xAxis, {key: x.domain()[0].toISOString()+x.domain()[1].toISOString(),
+          scaleLimService.valueLim ? m("g.x-axis", m(yAxis, {key: `${scaleLimService.valueLim[0]}-${scaleLimService.valueLim[1]}-${yScaleType}`, y: y, MARGIN: MARGIN, SVG_SIZE: SVG_SIZE})):"",
+          scaleLimService.dateLim ? m("g.y-axis", m(xAxis, {key: x.domain()[0].toISOString()+x.domain()[1].toISOString(),
             x: x, MARGIN: MARGIN, SVG_SIZE: SVG_SIZE})):"",
           m("g.country-lines", m(countryLines, {
             key: yScaleType,
@@ -74,7 +74,7 @@ export default function chartComponent() {
             MARGIN: MARGIN,
             showPoints: showPoints
           })),
-          m("g", m(legend, {chartService: vnode.attrs.chartService, MARGIN: MARGIN}))
+          m("g.legend", m(legend, {chartService: vnode.attrs.chartService, MARGIN: MARGIN}))
         ])
       ])
     }

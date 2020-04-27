@@ -17,7 +17,7 @@ export default function yAxis() {
       d3.select(vnode.dom).selectAll(".y-gridlines line").attr("stroke", "#cecece")
     },
     view: function(vnode) {
-      return m("g.y-axis")
+      return m("g")
     }
   }
 }

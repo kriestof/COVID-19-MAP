@@ -16,6 +16,9 @@
 body {margin: 0; margin-bottom:  50px; font-family: sans-serif; position: relative}
 
 header h1 {margin: 30px 18px 50px 18px;}
+header h1 img {vertical-align: middle;}
+header h1 span {vertical-align: middle; padding-left: 15px;}
+
 span.label { padding-right: 5px; font-weight: bold;}
 
 .inner { display: flex; flex-direction: row; flex-wrap: wrap; }
@@ -65,14 +68,17 @@ footer {
   position: fixed;
   bottom: 0;
   width: 100%;
-  padding: 10px 0;
+  height: 45px;
+  padding: 10px 10px;
   height: 25px;
   border-top: 1px solid #cecece;
   box-shadow: 0 -1px 5px 0 #cecece;
   background-color: white;
   font-size: 0.9em;
 }
-footer .left { margin-left: 10px;}
-footer .right {float:right; margin-right: 10px;}
+footer.left {line-height: 45px;}
+footer .left .logo-link { vertical-align: top; margin-right: 8px;}
+footer .left span { display: inline-block; padding-top: 2px; padding-right: 5px;}
+footer .right {float:right;}
 
 .help {padding: 0 18px; width: 1200px;}

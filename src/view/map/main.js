@@ -48,7 +48,7 @@ export default function mapComponent() {
           m("span.label", "Region:"),
           m("select.region", {oninput: function() {
             let reg = config.REGIONS.find((x) => this.value === x.value)
-            projection.scale(reg.scale).translate(reg.translate)
+            config.PROJECTION.scale(reg.scale).translate(reg.translate)
             regionValue = reg.value
           }}, config.REGIONS.map((reg) => m("option" , {value: reg.value}, reg.name))),
           m("span.label", "Mode:"),
