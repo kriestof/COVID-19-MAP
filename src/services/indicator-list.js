@@ -1,7 +1,7 @@
 import m from "/web_modules/mithril.js"
 import * as math from "/web_modules/mathjs.js"
 
-import * as config from "/src/config/world/main.js"
+import * as config from "../config/world/main.js"
 
 export default function IndicatorList(scaleLimService) {
   this.dates = []

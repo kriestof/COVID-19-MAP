@@ -1,6 +1,6 @@
 import m from "/web_modules/mithril.js"
 
-import * as config from "/src/config/world/main.js"
+import * as config from "../../config/world/main.js"
 
 export default function formulaMenuComponent() {
   let formulaValue = config.PREDEFINED_INDICATORS[0].name

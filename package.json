@@ -4,7 +4,10 @@
   "description": "[COVID-19 chart and map](https://kriestof.github.io/COVID-19-chart/). Check how COVID-19 disease develops worldwide.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "snowpack --include \"src/**/*.js\""
+    "build:snowpack": "snowpack --include \"src/**/*.js\" --optimize --dest dist/web_modules",
+    "build:rollup": "rollup src/index.js --file dist/bundle.js --format es",
+    "build": "npm run build:snowpack && npm run build:rollup",
+    "postinstall": "snowpack --include \"src/**/*.js\""
   },
   "repository": {
     "type": "git",

@@ -6,7 +6,7 @@ import {feature as topojson_feature} from "/web_modules/topojson-client.js"
 import countryPathComponent from "./path.js"
 import legendComponent from "./legend.js"
 import downloadMapPng from "./download-png.js"
-import * as config from "/src/config/world/main.js"
+import * as config from "../../config/world/main.js"
 
 export default function mapComponent() {
   let selectedDate = -1

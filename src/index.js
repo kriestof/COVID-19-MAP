@@ -10,7 +10,7 @@ import chartComponent from "./view/chart/main.js"
 import scaleLimComponent from "./view/scale-limits/main.js"
 import footerComponent from "./view/footer.js"
 import headerComponent from "./view/header.js"
-import {HELP_TEXT} from "/src/config/world/main.js"
+import {HELP_TEXT} from "./config/world/main.js"
 
 let scaleLimService = new ScaleLimService()
 let indicatorList = new IndicatorList(scaleLimService)
