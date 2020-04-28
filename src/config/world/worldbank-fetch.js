@@ -1,6 +1,6 @@
 import * as d3 from "/web_modules/d3.js"
 import * as math from "/web_modules/mathjs.js"
-import {UTCDate} from "/src/utils.js"
+import {UTCDate} from "./utils.js"
 
 export default function fetchWbankIndicators(formula, data, dates, countryNames) {
   let pr = undefined
