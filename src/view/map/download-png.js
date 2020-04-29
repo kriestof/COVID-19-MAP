@@ -28,7 +28,7 @@ export default function downloadMapPng(indicatorList) {
 
   downloadSvg.selectAll(".country-paths, .legend").attr("transform", `translate(0, ${40*SCALE}) scale(${SCALE})`)
 
-  let downlaodSvgG = downloadSvg.append("g").attr("transform", "scale(2)")
+  let downlaodSvgG = downloadSvg.append("g").attr("transform", `scale(${SCALE})`)
   downlaodSvgG.append("rect")
     .attr("y", downloadSvg.attr("height")/SCALE-70)
     .attr("height", 70)
