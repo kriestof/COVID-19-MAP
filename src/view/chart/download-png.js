@@ -47,7 +47,7 @@ export default function downloadChartPng(MARGIN) {
 
   downloadSvg
     .append("text")
-    .text(`source: covid19chart.info | formula:  ${d3.select("#formula").node().value}`)
+    .text(`source: covid19map.icm.edu.pl | formula:  ${d3.select("#formula").node().value}`)
     .attr("y", downloadSvg.attr("height")-47).attr("x", MARGIN.x)
     .attr("fill", "#595959")
     .style("font-family", "sans-serif")
