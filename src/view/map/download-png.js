@@ -48,7 +48,7 @@ export default function downloadMapPng(indicatorList) {
   downlaodSvgG
     .append("text")
     .attr("y", downloadSvg.attr("height")/SCALE-28).attr("x", 20)
-    .text("ICM University of Warsaw. COVID-19 chart and map. © 2020 Krzysztof Piwoński. License: CC BY-SA.")
+    .text("ICM University of Warsaw. COVID-19 chart and map. © 2020 Krzysztof Piwoński.")
     .style("fill", "white")
     .style("font-family", "sans-serif")
     .style("font-size", "12px")
