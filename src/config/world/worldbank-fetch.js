@@ -45,7 +45,7 @@ export default function fetchWbankIndicators(formula, data, dates, countryNames)
   if (!wbankIndicators.length) return Promise.resolve()
   let countryNamesSet = new Set(countryNames)
 
-  return d3.json(`http://api.worldbank.org/v2/country/all/indicator/${wbankIndicators.join(";")}?format=json&mrnev=1&gapfill=Y&source=2&Per_page=10000`)
+  return d3.json(`https://api.worldbank.org/v2/country/all/indicator/${wbankIndicators.join(";")}?format=json&mrnev=1&gapfill=Y&source=2&Per_page=10000`)
     .then(function(wbankData) {
       const namesMap = {
         "Bahamas, The": "Bahamas",
