@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:snowpack": "snowpack --include \"src/**/*.js\" --optimize --dest dist/web_modules",
     "build:rollup": "rollup src/index.js --file dist/bundle.js --format es",
-    "build": "npm run build:snowpack && npm run build:rollup",
+    "build:rollup_nomodule": "rollup -c rollup_nomodule.config.js",
+    "build": "npm run build:snowpack && npm run build:rollup && npm run build:rollup_nomodule",
     "postinstall": "snowpack --include \"src/**/*.js\""
   },
   "repository": {
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/kriestof/COVID-19-chart#readme",
   "devDependencies": {
+    "rollup": "^2.7.5",
     "snowpack": "^1.7.1"
   },
   "dependencies": {
