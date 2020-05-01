@@ -32,6 +32,7 @@ export default function countryPathComponent() {
                 d: vnode.state.projectedPath,
                 fill: val !== undefined ? d3.interpolateRdBu(vnode.attrs.scale(val)):"#ababab",
                 onclick: function() {
+                  if (!val) return
                   vnode.attrs.chartService.addCountry(countryPath.properties.name)
                 },
                 onmouseover: () => vnode.state.active = true,

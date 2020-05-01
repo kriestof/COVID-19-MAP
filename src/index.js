@@ -47,7 +47,7 @@ let rootComponent = {
         m(chartComponent, {indicatorList: indicatorList, chartService: chartService, scaleLimService: scaleLimService})
       ]),
       ]),
-      m(footerComponent)    
+      m(footerComponent)
     ])
   }
 }

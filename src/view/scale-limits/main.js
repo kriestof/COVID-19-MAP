@@ -31,7 +31,7 @@ export default function scaleLimComponent() {
           m("span.label", "Date range:"),
           m("input", {type: "date",
             required: true,
-            valueAsDate: scaleLimService.dateLim ? scaleLimService.dateLim[0]:null,
+            value: scaleLimService.dateLim ? scaleLimService.dateLim[0].toISOString().slice(0, 10):null,
             onchange: function() {
               if(this.value) scaleLimService.dateLim[0] = new Date(this.value)
             }
@@ -39,7 +39,7 @@ export default function scaleLimComponent() {
           m("span", ":"),
           m("input", {type: "date",
             required: true,
-            valueAsDate: scaleLimService.dateLim ? scaleLimService.dateLim[1]:null,
+            value: scaleLimService.dateLim ? scaleLimService.dateLim[1].toISOString().slice(0, 10):null,
             onchange: function() {
               if(this.value) scaleLimService.dateLim[1] = new Date(this.value)
             }
