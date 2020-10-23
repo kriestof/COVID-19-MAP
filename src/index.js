@@ -35,7 +35,7 @@ let chartService = new ChartService(indicatorList)
 
 let rootComponent = {
   view: function(vnode) {
-    return m("", [
+    return m(".outer", [
       m(headerComponent),
       m("div", m("h1", [
         // m("a", {href: "https://icm.edu.pl/"}, m("img", {src: "assets/logo_icm.svg", height: "40px"})),
