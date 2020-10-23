@@ -36,7 +36,11 @@ let chartService = new ChartService(indicatorList)
 let rootComponent = {
   view: function(vnode) {
     return m("", [
-      m(headerComponent, {text: "Interactive Pandemic Map"}),
+      m(headerComponent),
+      m("div", m("h1", [
+        // m("a", {href: "https://icm.edu.pl/"}, m("img", {src: "assets/logo_icm.svg", height: "40px"})),
+        m("span", "Interactive Pandemic Map")
+      ])),
       m("main.inner", [
       m("div", [
         m(formulaMenuComponent, {indicatorList: indicatorList}),

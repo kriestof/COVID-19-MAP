@@ -22,7 +22,6 @@ export default function footerComponent() {
    view: function(vnode) {
      return m("footer", [
        m("span.left", [
-         m("a.logo-link", {href: "https://icm.edu.pl/"}, m("img", {src: "assets/logo_icm.svg", height: "20px"})),
          m("span", "COVID-19 chart and map. Copyright 2020 Krzysztof Piwoński. "),
          m("a", {href: "https://github.com/kriestof/COVID-19-MAP"}, "source code")
        ]),

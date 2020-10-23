@@ -13,11 +13,23 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. */
-body {margin: 0; margin-bottom:  50px; font-family: sans-serif; position: relative}
+body {margin: 0; margin-bottom:  50px; font-family: 'Open Sans', sans-serif;; position: relative}
 
-header h1 {margin: 30px 18px 50px 18px;}
-header h1 img {vertical-align: middle;}
-header h1 span {vertical-align: middle; padding-left: 15px;}
+header { background: #f1f1f1; height: 70px;}
+header .menu-left {line-height: 70px; margin-left: 20px; padding-top: 5px; float: left;}
+header .menu-left a.uw {display: inline-block; margin-right: 20px; position: relative; vertical-align: middle;}
+header .menu-left a.uw img {height: 60px;}
+header .menu-left a img:hover {opacity: 0.8;}
+header .menu-left a.uw::after {width: 1px; content: ''; height: 28px; background: black; position: absolute; top: 16px; right: -10px;}
+header .menu-left a.icm img {height: 40px;}
+
+header .menu-right { line-height: 70px; float: right; margin-right: 20px;}
+header .menu-right a { text-decoration: none; color: #555; font-size: 0.875rem; font-weight: 500; margin-left: 25px;}
+header .menu-right a:hover {color: initial;}
+
+div h1 {margin: 30px 18px 50px 18px;}
+div h1 img {vertical-align: middle;}
+div h1 span {vertical-align: middle;}
 
 span.label { padding-right: 5px; font-weight: bold;}
 
@@ -69,15 +81,20 @@ footer {
   box-sizing: border-box;
   bottom: 0;
   width: 100%;
-  height: 45px;
-  padding: 10px 10px;
-  border-top: 1px solid #cecece;
-  box-shadow: 0 -1px 5px 0 #cecece;
-  background-color: white;
+  height: 100px;
+  line-height: 100px;
+  padding: 10px 20px;
+  background: #f1f1f1f1;
+  color: #999;
+  /* border-top: 1px solid #cecece; */
+  /* box-shadow: 0 -1px 5px 0 #cecece; */
   font-size: 0.9em;
 }
-footer.left {line-height: 45px;}
-footer .left .logo-link { vertical-align: top; margin-right: 8px;}
+
+footer a {color: inherit;}
+footer a:hover {color: initial;}
+footer.left {display: inline-block;}
+/* footer .left .logo-link { vertical-align: top; margin-right: 8px;} */
 footer .left span { display: inline-block; padding-top: 2px; padding-right: 5px;}
 footer .right {float:right;}
 

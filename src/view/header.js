@@ -19,10 +19,20 @@ import m from "/web_modules/mithril.js"
 
 let headerComponent = {
   view: function(vnode) {
-    return m("header", m("h1", [
-      m("a", {href: "https://icm.edu.pl/"}, m("img", {src: "assets/logo_icm.svg", height: "40px"})),
-      m("span", vnode.attrs.text)
-    ]))
+    return m("header", [
+      m("div.menu-left", [
+        m("a.uw", {href: "https://www.uw.edu.pl/", "target": "_blank"}, m("img", {src: "assets/uwlogo.png"})),
+        m("a.icm", {href: "https://www.icm.edu.pl/", "target": "_blank"}, m("img", {src: "assets/icm_gray.png"}))
+      ]),
+      m("div.menu-right", [
+        // m("a", {href: "https://icm.edu.pl/"}, m("img", {src: "assets/logo_icm.svg", height: "40px"})),
+        m("a", {href: "https://covid-19.icm.edu.pl"}, "Start Covid-19"),
+        // m("a", {href: "https://covid-19.icm.edu.pl/model-epidemiologiczny-icm/#"}, "Badania dr Afelt"),
+        m("a", {href: "https://covid-19.icm.edu.pl/model-epidemiologiczny-icm/"}, "Model epidemiologiczny ICM"),
+        m("a", {href: "https://covid19map.icm.edu.pl"}, "Mapa pandemii")
+        // m("a", "Interactive Pandemic Map")
+      ])
+    ])
   }
 }
 
