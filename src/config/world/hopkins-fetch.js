@@ -46,6 +46,7 @@ export default function hopkinsFetch() {
 
 function convertHopkins(indicatorName, res) {
   let removeCountries = new Set([
+    "",
     "Diamond Princess",
     "Holy See",
     "MS Zaandam",
