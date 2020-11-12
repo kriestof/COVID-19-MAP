@@ -53,8 +53,6 @@ function convertHopkins(indicatorName, res) {
     "Saint Kitts and Nevis",
     "Saint Lucia",
     "Saint Vincent and the Grenadines",
-    "Western Sahara",
-    "Taiwan*"
   ])
 
   let columns = res.data[indicatorName].columns
@@ -76,7 +74,9 @@ function convertHopkins(indicatorName, res) {
     "Eswatini": "eSwatini",
     "Equatorial Guinea": "Eq. Guinea",
     "South Sudan": "S. Sudan",
-    "Congo (Brazzaville)": "Congo"
+    "Congo (Brazzaville)": "Congo",
+    "Taiwan*": "Taiwan",
+    "Western Sahara": "W. Sahara"
   }
 
   res.data[indicatorName].map(function(d) {
